@@ -1,5 +1,5 @@
 # https://github.com/marketplace/actions/setup-dart-sdk
-name: build
+name: quality
 
 on:
   pull_request:
