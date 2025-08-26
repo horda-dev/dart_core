@@ -11,17 +11,17 @@ import 'query_res.dart';
 
 part 'ws.g.dart';
 
-class WsMessageBox2 {
+class WsMessageBox {
   final int id;
 
-  final WsMessage2 msg;
+  final WsMessage msg;
 
-  WsMessageBox2({
+  WsMessageBox({
     required this.id,
     required this.msg,
   });
 
-  factory WsMessageBox2.decodeJson(String str, Logger logger) {
+  factory WsMessageBox.decodeJson(String str, Logger logger) {
     try {
       var json = jsonDecode(str);
 
@@ -36,39 +36,39 @@ class WsMessageBox2 {
       }
 
       var fac = switch (type) {
-        'welcome' => WelcomeWsMsg2.fromJson,
-        'query' => QueryWsMsg2.fromJson,
-        'query_result' => QueryResultWsMsg2.fromJson,
-        'send' => SendCommandWsMsg2.fromJson,
-        'sendack' => SendCommandAckWsMsg2.fromJson,
-        'call' => CallCommandWsMsg2.fromJson,
-        'callres' => CallCommandResWsMsg2.fromJson,
-        'dispatch' => DispatchEventWsMsg2.fromJson,
-        'dispatchres' => DispatchEventResWsMsg2.fromJson,
-        'subv' => SubscribeViewsWsMsg2.fromJson,
-        'subvack' => SubscribeViewsAckWsMsg2.fromJson,
-        'suba' => SubscribeActorWsMsg2.fromJson,
-        'subares' => SubscribeActorResWsMsg2.fromJson,
-        'unsuba' => UnsubscribeActorWsMsg2.fromJson,
-        'unsubares' => UnsubscribeActorResWsMsg2.fromJson,
-        'unsubv' => UnsubscribeViewsWsMsg2.fromJson,
-        'unsubvres' => UnsubscribeViewsResWsMsg2.fromJson,
-        'evt' => ActorEventWsMsg2.fromJson,
-        'chg' => ViewChangeWsMsg2.fromJson,
-        'error' => ErrorWsMsg2.fromJson,
+        'welcome' => WelcomeWsMsg.fromJson,
+        'query' => QueryWsMsg.fromJson,
+        'query_result' => QueryResultWsMsg.fromJson,
+        'send' => SendCommandWsMsg.fromJson,
+        'sendack' => SendCommandAckWsMsg.fromJson,
+        'call' => CallCommandWsMsg.fromJson,
+        'callres' => CallCommandResWsMsg.fromJson,
+        'dispatch' => DispatchEventWsMsg.fromJson,
+        'dispatchres' => DispatchEventResWsMsg.fromJson,
+        'subv' => SubscribeViewsWsMsg.fromJson,
+        'subvack' => SubscribeViewsAckWsMsg.fromJson,
+        'suba' => SubscribeActorWsMsg.fromJson,
+        'subares' => SubscribeActorResWsMsg.fromJson,
+        'unsuba' => UnsubscribeActorWsMsg.fromJson,
+        'unsubares' => UnsubscribeActorResWsMsg.fromJson,
+        'unsubv' => UnsubscribeViewsWsMsg.fromJson,
+        'unsubvres' => UnsubscribeViewsResWsMsg.fromJson,
+        'evt' => ActorEventWsMsg.fromJson,
+        'chg' => ViewChangeWsMsg.fromJson,
+        'error' => ErrorWsMsg.fromJson,
         _ => throw FluirError('unknown type $type'),
       };
 
-      return WsMessageBox2(
+      return WsMessageBox(
         id: id,
         msg: fac(json['msg']),
       );
     } catch (e) {
       logger.severe('decode json error: $e');
 
-      return WsMessageBox2(
+      return WsMessageBox(
         id: -1,
-        msg: ErrorWsMsg2(str, e.toString()),
+        msg: ErrorWsMsg(str, e.toString()),
       );
     }
   }
@@ -94,19 +94,19 @@ class WsMessageBox2 {
 
   @override
   String toString() {
-    return 'WsMessageBox2(id: $id, type: ${msg.messageType})';
+    return 'WsMessageBox(id: $id, type: ${msg.messageType})';
   }
 }
 
-sealed class WsMessage2 {
+sealed class WsMessage {
   String get messageType;
 
   Map<String, dynamic> toJson();
 }
 
 @JsonSerializable()
-class WelcomeWsMsg2 implements WsMessage2 {
-  WelcomeWsMsg2(this.userId, this.serverVersion);
+class WelcomeWsMsg implements WsMessage {
+  WelcomeWsMsg(this.userId, this.serverVersion);
 
   final String? userId;
   final String serverVersion;
@@ -114,19 +114,19 @@ class WelcomeWsMsg2 implements WsMessage2 {
   @override
   String get messageType => 'welcome';
 
-  factory WelcomeWsMsg2.fromJson(Map<String, dynamic> json) =>
-      _$WelcomeWsMsg2FromJson(json);
+  factory WelcomeWsMsg.fromJson(Map<String, dynamic> json) =>
+      _$WelcomeWsMsgFromJson(json);
 
   @override
-  Map<String, dynamic> toJson() => _$WelcomeWsMsg2ToJson(this);
+  Map<String, dynamic> toJson() => _$WelcomeWsMsgToJson(this);
 
   @override
   String toString() => toJson().toString();
 }
 
 @JsonSerializable()
-class QueryWsMsg2 implements WsMessage2 {
-  QueryWsMsg2({
+class QueryWsMsg implements WsMessage {
+  QueryWsMsg({
     required this.actorId,
     required this.def,
   });
@@ -139,11 +139,11 @@ class QueryWsMsg2 implements WsMessage2 {
   @JsonKey(fromJson: _defFromJson, toJson: _defToJson)
   final QueryDef def;
 
-  factory QueryWsMsg2.fromJson(Map<String, dynamic> json) =>
-      _$QueryWsMsg2FromJson(json);
+  factory QueryWsMsg.fromJson(Map<String, dynamic> json) =>
+      _$QueryWsMsgFromJson(json);
 
   @override
-  Map<String, dynamic> toJson() => _$QueryWsMsg2ToJson(this);
+  Map<String, dynamic> toJson() => _$QueryWsMsgToJson(this);
 
   static QueryDef _defFromJson(Map<String, dynamic> json) {
     return QueryDef.fromJson(json);
@@ -154,12 +154,12 @@ class QueryWsMsg2 implements WsMessage2 {
   }
 
   @override
-  String toString() => 'QueryWsMsg2(actor: $actorId)';
+  String toString() => 'QueryWsMsg(actor: $actorId)';
 }
 
 @JsonSerializable()
-class QueryResultWsMsg2 implements WsMessage2 {
-  QueryResultWsMsg2({
+class QueryResultWsMsg implements WsMessage {
+  QueryResultWsMsg({
     required this.result,
   });
 
@@ -167,26 +167,26 @@ class QueryResultWsMsg2 implements WsMessage2 {
   String get messageType => 'query_result';
 
   @JsonKey(fromJson: _resFromJson, toJson: _resToJson)
-  final QueryResult2 result;
+  final QueryResult result;
 
-  factory QueryResultWsMsg2.fromJson(Map<String, dynamic> json) =>
-      _$QueryResultWsMsg2FromJson(json);
+  factory QueryResultWsMsg.fromJson(Map<String, dynamic> json) =>
+      _$QueryResultWsMsgFromJson(json);
 
   @override
-  Map<String, dynamic> toJson() => _$QueryResultWsMsg2ToJson(this);
+  Map<String, dynamic> toJson() => _$QueryResultWsMsgToJson(this);
 
-  static QueryResult2 _resFromJson(Map<String, dynamic> json) {
-    return QueryResult2.fromJson(json);
+  static QueryResult _resFromJson(Map<String, dynamic> json) {
+    return QueryResult.fromJson(json);
   }
 
-  static Map<String, dynamic> _resToJson(QueryResult2 res) {
+  static Map<String, dynamic> _resToJson(QueryResult res) {
     return res.toJson();
   }
 }
 
 @JsonSerializable()
-class ActorViewSub2 {
-  ActorViewSub2(this.id, this.name, this.changeId);
+class ActorViewSub {
+  ActorViewSub(this.id, this.name, this.changeId);
 
   /// actor id or attribute id
   @JsonKey(name: 'id')
@@ -199,10 +199,10 @@ class ActorViewSub2 {
   @JsonKey(name: 'ver')
   final String changeId;
 
-  factory ActorViewSub2.fromJson(Map<String, dynamic> json) =>
-      _$ActorViewSub2FromJson(json);
+  factory ActorViewSub.fromJson(Map<String, dynamic> json) =>
+      _$ActorViewSubFromJson(json);
 
-  Map<String, dynamic> toJson() => _$ActorViewSub2ToJson(this);
+  Map<String, dynamic> toJson() => _$ActorViewSubToJson(this);
 
   @override
   String toString() {
@@ -211,189 +211,189 @@ class ActorViewSub2 {
 }
 
 @JsonSerializable()
-class SubscribeViewsWsMsg2 implements WsMessage2 {
-  SubscribeViewsWsMsg2(this.subs);
+class SubscribeViewsWsMsg implements WsMessage {
+  SubscribeViewsWsMsg(this.subs);
 
-  final List<ActorViewSub2> subs;
+  final List<ActorViewSub> subs;
 
   @override
   String get messageType => 'subv';
 
-  factory SubscribeViewsWsMsg2.fromJson(Map<String, dynamic> json) =>
-      _$SubscribeViewsWsMsg2FromJson(json);
+  factory SubscribeViewsWsMsg.fromJson(Map<String, dynamic> json) =>
+      _$SubscribeViewsWsMsgFromJson(json);
 
   @override
-  Map<String, dynamic> toJson() => _$SubscribeViewsWsMsg2ToJson(this);
+  Map<String, dynamic> toJson() => _$SubscribeViewsWsMsgToJson(this);
 
   @override
   String toString() => 'SubscribeViews(count: ${subs.length})';
 }
 
 @JsonSerializable()
-class SubscribeViewsAckWsMsg2 implements WsMessage2 {
-  SubscribeViewsAckWsMsg2();
+class SubscribeViewsAckWsMsg implements WsMessage {
+  SubscribeViewsAckWsMsg();
 
   @override
   String get messageType => 'subvack';
 
-  factory SubscribeViewsAckWsMsg2.fromJson(Map<String, dynamic> json) =>
-      _$SubscribeViewsAckWsMsg2FromJson(json);
+  factory SubscribeViewsAckWsMsg.fromJson(Map<String, dynamic> json) =>
+      _$SubscribeViewsAckWsMsgFromJson(json);
 
   @override
-  Map<String, dynamic> toJson() => _$SubscribeViewsAckWsMsg2ToJson(this);
+  Map<String, dynamic> toJson() => _$SubscribeViewsAckWsMsgToJson(this);
 
   @override
   String toString() => 'SubscribeViewsAck()';
 }
 
 @JsonSerializable()
-class SubscribeActorWsMsg2 implements WsMessage2 {
-  SubscribeActorWsMsg2(this.actorId);
+class SubscribeActorWsMsg implements WsMessage {
+  SubscribeActorWsMsg(this.actorId);
 
   final ActorId actorId;
 
   @override
   String get messageType => 'suba';
 
-  factory SubscribeActorWsMsg2.fromJson(Map<String, dynamic> json) =>
-      _$SubscribeActorWsMsg2FromJson(json);
+  factory SubscribeActorWsMsg.fromJson(Map<String, dynamic> json) =>
+      _$SubscribeActorWsMsgFromJson(json);
 
   @override
-  Map<String, dynamic> toJson() => _$SubscribeActorWsMsg2ToJson(this);
+  Map<String, dynamic> toJson() => _$SubscribeActorWsMsgToJson(this);
 
   @override
   String toString() => 'SubscribeActor($actorId)';
 }
 
 @JsonSerializable()
-class SubscribeActorResWsMsg2 implements WsMessage2 {
-  SubscribeActorResWsMsg2();
+class SubscribeActorResWsMsg implements WsMessage {
+  SubscribeActorResWsMsg();
 
   @override
   String get messageType => 'subares';
 
-  factory SubscribeActorResWsMsg2.fromJson(Map<String, dynamic> json) =>
-      _$SubscribeActorResWsMsg2FromJson(json);
+  factory SubscribeActorResWsMsg.fromJson(Map<String, dynamic> json) =>
+      _$SubscribeActorResWsMsgFromJson(json);
 
   @override
-  Map<String, dynamic> toJson() => _$SubscribeActorResWsMsg2ToJson(this);
+  Map<String, dynamic> toJson() => _$SubscribeActorResWsMsgToJson(this);
 
   @override
   String toString() => 'SubscribeActorRes()';
 }
 
 @JsonSerializable()
-class UnsubscribeActorWsMsg2 implements WsMessage2 {
-  UnsubscribeActorWsMsg2(this.actorId);
+class UnsubscribeActorWsMsg implements WsMessage {
+  UnsubscribeActorWsMsg(this.actorId);
 
   final ActorId actorId;
 
   @override
   String get messageType => 'unsuba';
 
-  factory UnsubscribeActorWsMsg2.fromJson(Map<String, dynamic> json) =>
-      _$UnsubscribeActorWsMsg2FromJson(json);
+  factory UnsubscribeActorWsMsg.fromJson(Map<String, dynamic> json) =>
+      _$UnsubscribeActorWsMsgFromJson(json);
 
   @override
-  Map<String, dynamic> toJson() => _$UnsubscribeActorWsMsg2ToJson(this);
+  Map<String, dynamic> toJson() => _$UnsubscribeActorWsMsgToJson(this);
 
   @override
   String toString() => 'UnsubscribeActor($actorId)';
 }
 
 @JsonSerializable()
-class UnsubscribeActorResWsMsg2 implements WsMessage2 {
-  UnsubscribeActorResWsMsg2();
+class UnsubscribeActorResWsMsg implements WsMessage {
+  UnsubscribeActorResWsMsg();
 
   @override
   String get messageType => 'unsubares';
 
-  factory UnsubscribeActorResWsMsg2.fromJson(Map<String, dynamic> json) =>
-      _$UnsubscribeActorResWsMsg2FromJson(json);
+  factory UnsubscribeActorResWsMsg.fromJson(Map<String, dynamic> json) =>
+      _$UnsubscribeActorResWsMsgFromJson(json);
 
   @override
-  Map<String, dynamic> toJson() => _$UnsubscribeActorResWsMsg2ToJson(this);
+  Map<String, dynamic> toJson() => _$UnsubscribeActorResWsMsgToJson(this);
 
   @override
   String toString() => 'UnsubscribeActorRes()';
 }
 
 @JsonSerializable()
-class UnsubscribeViewsWsMsg2 implements WsMessage2 {
-  UnsubscribeViewsWsMsg2(this.subs);
+class UnsubscribeViewsWsMsg implements WsMessage {
+  UnsubscribeViewsWsMsg(this.subs);
 
-  final List<ActorViewSub2> subs;
+  final List<ActorViewSub> subs;
 
   @override
   String get messageType => 'unsubv';
 
-  factory UnsubscribeViewsWsMsg2.fromJson(Map<String, dynamic> json) =>
-      _$UnsubscribeViewsWsMsg2FromJson(json);
+  factory UnsubscribeViewsWsMsg.fromJson(Map<String, dynamic> json) =>
+      _$UnsubscribeViewsWsMsgFromJson(json);
 
   @override
-  Map<String, dynamic> toJson() => _$UnsubscribeViewsWsMsg2ToJson(this);
+  Map<String, dynamic> toJson() => _$UnsubscribeViewsWsMsgToJson(this);
 
   @override
   String toString() => 'UnsubscribeViews(count: ${subs.length})';
 }
 
 @JsonSerializable()
-class UnsubscribeViewsResWsMsg2 implements WsMessage2 {
-  UnsubscribeViewsResWsMsg2();
+class UnsubscribeViewsResWsMsg implements WsMessage {
+  UnsubscribeViewsResWsMsg();
 
   @override
   String get messageType => 'unsubvres';
 
-  factory UnsubscribeViewsResWsMsg2.fromJson(Map<String, dynamic> json) =>
-      _$UnsubscribeViewsResWsMsg2FromJson(json);
+  factory UnsubscribeViewsResWsMsg.fromJson(Map<String, dynamic> json) =>
+      _$UnsubscribeViewsResWsMsgFromJson(json);
 
   @override
-  Map<String, dynamic> toJson() => _$UnsubscribeViewsResWsMsg2ToJson(this);
+  Map<String, dynamic> toJson() => _$UnsubscribeViewsResWsMsgToJson(this);
 
   @override
   String toString() => 'UnsubscribeViewsRes()';
 }
 
 @JsonSerializable()
-class ActorEventWsMsg2 implements WsMessage2 {
-  ActorEventWsMsg2(this.env);
+class ActorEventWsMsg implements WsMessage {
+  ActorEventWsMsg(this.env);
 
-  final EventEnvelop2 env;
+  final EventEnvelop env;
 
   @override
   String get messageType => 'evt';
 
-  factory ActorEventWsMsg2.fromJson(Map<String, dynamic> json) =>
-      _$ActorEventWsMsg2FromJson(json);
+  factory ActorEventWsMsg.fromJson(Map<String, dynamic> json) =>
+      _$ActorEventWsMsgFromJson(json);
 
   @override
-  Map<String, dynamic> toJson() => _$ActorEventWsMsg2ToJson(this);
+  Map<String, dynamic> toJson() => _$ActorEventWsMsgToJson(this);
 
   @override
   String toString() => 'ActorEvent(${env.toJson()})';
 }
 
 @JsonSerializable()
-class ViewChangeWsMsg2 implements WsMessage2 {
-  ViewChangeWsMsg2(this.env);
+class ViewChangeWsMsg implements WsMessage {
+  ViewChangeWsMsg(this.env);
 
-  final ChangeEnvelop2 env;
+  final ChangeEnvelop env;
 
   @override
   String get messageType => 'chg';
 
-  factory ViewChangeWsMsg2.fromJson(Map<String, dynamic> json) =>
-      _$ViewChangeWsMsg2FromJson(json);
+  factory ViewChangeWsMsg.fromJson(Map<String, dynamic> json) =>
+      _$ViewChangeWsMsgFromJson(json);
 
   @override
-  Map<String, dynamic> toJson() => _$ViewChangeWsMsg2ToJson(this);
+  Map<String, dynamic> toJson() => _$ViewChangeWsMsgToJson(this);
 
   @override
   String toString() => 'ViewChange($env)';
 }
 
-class SendCommandWsMsg2 implements WsMessage2 {
-  SendCommandWsMsg2(this.actorName, this.to, this.cmd);
+class SendCommandWsMsg implements WsMessage {
+  SendCommandWsMsg(this.actorName, this.to, this.cmd);
 
   final String actorName;
 
@@ -404,14 +404,14 @@ class SendCommandWsMsg2 implements WsMessage2 {
   @override
   String get messageType => 'send';
 
-  factory SendCommandWsMsg2.fromJson(Map<String, dynamic> json) {
+  factory SendCommandWsMsg.fromJson(Map<String, dynamic> json) {
     var type = json['type'] as String;
     var fac = kMsgFromJsonFac[type];
     if (fac == null) {
       throw FluirError('unregistered command type $type in $json');
     }
 
-    return SendCommandWsMsg2(
+    return SendCommandWsMsg(
       json['actorName'],
       json['to'],
       fac(json['cmd']),
@@ -433,24 +433,24 @@ class SendCommandWsMsg2 implements WsMessage2 {
 }
 
 @JsonSerializable()
-class SendCommandAckWsMsg2 implements WsMessage2 {
-  SendCommandAckWsMsg2();
+class SendCommandAckWsMsg implements WsMessage {
+  SendCommandAckWsMsg();
 
   @override
   String get messageType => 'sendack';
 
-  factory SendCommandAckWsMsg2.fromJson(Map<String, dynamic> json) =>
-      _$SendCommandAckWsMsg2FromJson(json);
+  factory SendCommandAckWsMsg.fromJson(Map<String, dynamic> json) =>
+      _$SendCommandAckWsMsgFromJson(json);
 
   @override
-  Map<String, dynamic> toJson() => _$SendCommandAckWsMsg2ToJson(this);
+  Map<String, dynamic> toJson() => _$SendCommandAckWsMsgToJson(this);
 
   @override
   String toString() => 'SendCmdAck()';
 }
 
-class CallCommandWsMsg2 implements WsMessage2 {
-  CallCommandWsMsg2(this.actorName, this.to, this.cmd);
+class CallCommandWsMsg implements WsMessage {
+  CallCommandWsMsg(this.actorName, this.to, this.cmd);
 
   final String actorName;
 
@@ -461,14 +461,14 @@ class CallCommandWsMsg2 implements WsMessage2 {
   @override
   String get messageType => 'call';
 
-  factory CallCommandWsMsg2.fromJson(Map<String, dynamic> json) {
+  factory CallCommandWsMsg.fromJson(Map<String, dynamic> json) {
     var type = json['type'] as String;
     var fac = kMsgFromJsonFac[type];
     if (fac == null) {
       throw FluirError('unregistered command type $type in $json');
     }
 
-    return CallCommandWsMsg2(
+    return CallCommandWsMsg(
       json['actorName'],
       json['to'],
       fac(json['cmd']),
@@ -490,8 +490,8 @@ class CallCommandWsMsg2 implements WsMessage2 {
 }
 
 @JsonSerializable()
-class CallCommandResWsMsg2 implements WsMessage2 {
-  CallCommandResWsMsg2(this.isOk, this.reply);
+class CallCommandResWsMsg implements WsMessage {
+  CallCommandResWsMsg(this.isOk, this.reply);
 
   final bool isOk;
 
@@ -500,32 +500,32 @@ class CallCommandResWsMsg2 implements WsMessage2 {
   @override
   String get messageType => 'callres';
 
-  factory CallCommandResWsMsg2.fromJson(Map<String, dynamic> json) =>
-      _$CallCommandResWsMsg2FromJson(json);
+  factory CallCommandResWsMsg.fromJson(Map<String, dynamic> json) =>
+      _$CallCommandResWsMsgFromJson(json);
 
   @override
-  Map<String, dynamic> toJson() => _$CallCommandResWsMsg2ToJson(this);
+  Map<String, dynamic> toJson() => _$CallCommandResWsMsgToJson(this);
 
   @override
   String toString() => 'CallResCmd(${toJson()})';
 }
 
-class DispatchEventWsMsg2 implements WsMessage2 {
-  DispatchEventWsMsg2(this.event);
+class DispatchEventWsMsg implements WsMessage {
+  DispatchEventWsMsg(this.event);
 
   final RemoteEvent event;
 
   @override
   final messageType = 'dispatch';
 
-  factory DispatchEventWsMsg2.fromJson(Map<String, dynamic> json) {
+  factory DispatchEventWsMsg.fromJson(Map<String, dynamic> json) {
     final type = json['type'] as String;
     final fac = kMsgFromJsonFac[type];
     if (fac == null) {
       throw FluirError('unregistered event type $type in $json');
     }
 
-    return DispatchEventWsMsg2(
+    return DispatchEventWsMsg(
       fac(json['event']),
     );
   }
@@ -544,8 +544,8 @@ class DispatchEventWsMsg2 implements WsMessage2 {
 }
 
 @JsonSerializable()
-class DispatchEventResWsMsg2 implements WsMessage2 {
-  DispatchEventResWsMsg2(this.result);
+class DispatchEventResWsMsg implements WsMessage {
+  DispatchEventResWsMsg(this.result);
 
   @JsonKey(name: 'flowResult')
   final FlowResult result;
@@ -553,13 +553,13 @@ class DispatchEventResWsMsg2 implements WsMessage2 {
   @override
   final messageType = 'dispatchres';
 
-  factory DispatchEventResWsMsg2.fromJson(Map<String, dynamic> json) {
-    return _$DispatchEventResWsMsg2FromJson(json);
+  factory DispatchEventResWsMsg.fromJson(Map<String, dynamic> json) {
+    return _$DispatchEventResWsMsgFromJson(json);
   }
 
   @override
   Map<String, dynamic> toJson() {
-    return _$DispatchEventResWsMsg2ToJson(this);
+    return _$DispatchEventResWsMsgToJson(this);
   }
 
   @override
@@ -567,8 +567,8 @@ class DispatchEventResWsMsg2 implements WsMessage2 {
 }
 
 @JsonSerializable()
-class ErrorWsMsg2 implements WsMessage2 {
-  ErrorWsMsg2(this.type, this.error);
+class ErrorWsMsg implements WsMessage {
+  ErrorWsMsg(this.type, this.error);
 
   final String type;
 
@@ -577,12 +577,12 @@ class ErrorWsMsg2 implements WsMessage2 {
   @override
   String get messageType => 'error';
 
-  factory ErrorWsMsg2.fromJson(Map<String, dynamic> json) =>
-      _$ErrorWsMsg2FromJson(json);
+  factory ErrorWsMsg.fromJson(Map<String, dynamic> json) =>
+      _$ErrorWsMsgFromJson(json);
 
   @override
-  Map<String, dynamic> toJson() => _$ErrorWsMsg2ToJson(this);
+  Map<String, dynamic> toJson() => _$ErrorWsMsgToJson(this);
 
   @override
-  String toString() => 'ErrorWsMsg2(type: $type, e: $error)';
+  String toString() => 'ErrorWsMsg(type: $type, e: $error)';
 }

@@ -289,8 +289,8 @@ abstract class AttributeChange extends Change {
   String get attrName;
 }
 
-class RefValueAttributeChanged2 extends AttributeChange {
-  RefValueAttributeChanged2({
+class RefValueAttributeChanged extends AttributeChange {
+  RefValueAttributeChanged({
     required this.attrId,
     required this.attrName,
     required this.newValue,
@@ -307,8 +307,8 @@ class RefValueAttributeChanged2 extends AttributeChange {
   @override
   final isOverwriting = true;
 
-  factory RefValueAttributeChanged2.fromJson(Map<String, dynamic> json) {
-    return RefValueAttributeChanged2(
+  factory RefValueAttributeChanged.fromJson(Map<String, dynamic> json) {
+    return RefValueAttributeChanged(
       attrId: json['id'],
       attrName: json['name'],
       newValue: json['val'],
@@ -325,8 +325,8 @@ class RefValueAttributeChanged2 extends AttributeChange {
   }
 }
 
-class CounterAttrIncremented2 extends AttributeChange {
-  CounterAttrIncremented2({
+class CounterAttrIncremented extends AttributeChange {
+  CounterAttrIncremented({
     required this.attrId,
     required this.attrName,
     required this.by,
@@ -343,8 +343,8 @@ class CounterAttrIncremented2 extends AttributeChange {
   @override
   final isOverwriting = false;
 
-  factory CounterAttrIncremented2.fromJson(Map<String, dynamic> json) {
-    return CounterAttrIncremented2(
+  factory CounterAttrIncremented.fromJson(Map<String, dynamic> json) {
+    return CounterAttrIncremented(
       attrId: json['id'],
       attrName: json['name'],
       by: json['by'],
@@ -361,8 +361,8 @@ class CounterAttrIncremented2 extends AttributeChange {
   }
 }
 
-class CounterAttrDecremented2 extends AttributeChange {
-  CounterAttrDecremented2({
+class CounterAttrDecremented extends AttributeChange {
+  CounterAttrDecremented({
     required this.attrId,
     required this.attrName,
     required this.by,
@@ -379,8 +379,8 @@ class CounterAttrDecremented2 extends AttributeChange {
   @override
   final isOverwriting = false;
 
-  factory CounterAttrDecremented2.fromJson(Map<String, dynamic> json) {
-    return CounterAttrDecremented2(
+  factory CounterAttrDecremented.fromJson(Map<String, dynamic> json) {
+    return CounterAttrDecremented(
       attrId: json['id'],
       attrName: json['name'],
       by: json['by'],
@@ -397,8 +397,8 @@ class CounterAttrDecremented2 extends AttributeChange {
   }
 }
 
-class CounterAttrReset2 extends AttributeChange {
-  CounterAttrReset2({
+class CounterAttrReset extends AttributeChange {
+  CounterAttrReset({
     required this.attrId,
     required this.attrName,
     required this.newValue,
@@ -415,8 +415,8 @@ class CounterAttrReset2 extends AttributeChange {
   @override
   final isOverwriting = false;
 
-  factory CounterAttrReset2.fromJson(Map<String, dynamic> json) {
-    return CounterAttrReset2(
+  factory CounterAttrReset.fromJson(Map<String, dynamic> json) {
+    return CounterAttrReset(
       attrId: json['id'],
       attrName: json['name'],
       newValue: json['val'],

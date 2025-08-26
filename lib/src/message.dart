@@ -50,8 +50,8 @@ class FluirErrorEvent extends RemoteEvent {
 
 typedef CommandId = int;
 
-class CommandEnvelop2 {
-  CommandEnvelop2({
+class CommandEnvelop {
+  CommandEnvelop({
     required this.to,
     required this.from,
     required this.commandId,
@@ -75,14 +75,14 @@ class CommandEnvelop2 {
 
   final ReplyClient replyClient;
 
-  factory CommandEnvelop2.fromJson(Map<String, dynamic> json) {
+  factory CommandEnvelop.fromJson(Map<String, dynamic> json) {
     final type = json['type'];
 
     if (type is! String) {
       throw FluirError('invalid command type in $json');
     }
 
-    return CommandEnvelop2(
+    return CommandEnvelop(
       to: json['to'],
       from: json['from'],
       commandId: json['cid'],
@@ -165,8 +165,8 @@ final class ReplyClient {
   Map<String, dynamic> toJson() => _$ReplyClientToJson(this);
 }
 
-class ChangeEnvelop2 {
-  ChangeEnvelop2({
+class ChangeEnvelop {
+  ChangeEnvelop({
     required this.changeId,
     required this.key,
     required this.name,
@@ -182,7 +182,7 @@ class ChangeEnvelop2 {
   }
 
   /// Constructor with empty [changeId]
-  ChangeEnvelop2.draft({
+  ChangeEnvelop.draft({
     required this.key,
     required this.name,
     required this.changes,
@@ -200,7 +200,7 @@ class ChangeEnvelop2 {
   /// in cases when it won't receive changes to project, but can be considered ready.
   ///
   /// They should be provided only by the server to the client and never stored.
-  ChangeEnvelop2.empty({
+  ChangeEnvelop.empty({
     required this.key,
     required this.name,
   })  : changeId = '',
@@ -231,7 +231,7 @@ class ChangeEnvelop2 {
 
   String get sourceId => '$key/$name';
 
-  factory ChangeEnvelop2.fromJson(Map<String, dynamic> json) {
+  factory ChangeEnvelop.fromJson(Map<String, dynamic> json) {
     final deserializedChanges = <Change>[];
 
     if (json['view'] == null || json['view'] == '') {
@@ -242,7 +242,7 @@ class ChangeEnvelop2 {
     final changesJson = json['changes'] as List;
 
     if (changesJson.isEmpty) {
-      return ChangeEnvelop2.empty(
+      return ChangeEnvelop.empty(
         key: json['aid'],
         name: name,
       );
@@ -265,7 +265,7 @@ class ChangeEnvelop2 {
       );
     }
 
-    return ChangeEnvelop2(
+    return ChangeEnvelop(
       changeId: json['chid'],
       key: json['aid'],
       name: name,
@@ -308,8 +308,8 @@ class ChangeEnvelop2 {
   String toString() => 'changes: $changes';
 }
 
-class EventEnvelop2 {
-  EventEnvelop2({
+class EventEnvelop {
+  EventEnvelop({
     required this.actorId,
     required this.eventId,
     required this.commandId,
@@ -327,14 +327,14 @@ class EventEnvelop2 {
 
   final Map<String, dynamic> event;
 
-  factory EventEnvelop2.fromJson(Map<String, dynamic> json) {
+  factory EventEnvelop.fromJson(Map<String, dynamic> json) {
     var type = json['type'];
 
     if (type is! String) {
       throw FluirError('invalid event type in $json');
     }
 
-    return EventEnvelop2(
+    return EventEnvelop(
       eventId: json['eid'],
       actorId: json['aid'],
       commandId: json['cid'],
@@ -653,20 +653,20 @@ void kRegisterFluirMessage() {
 
   // value attr
 
-  kRegisterMessageFactory<RefValueAttributeChanged2>(
-    RefValueAttributeChanged2.fromJson,
+  kRegisterMessageFactory<RefValueAttributeChanged>(
+    RefValueAttributeChanged.fromJson,
   );
 
   // counter attr
 
-  kRegisterMessageFactory<CounterAttrIncremented2>(
-    CounterAttrIncremented2.fromJson,
+  kRegisterMessageFactory<CounterAttrIncremented>(
+    CounterAttrIncremented.fromJson,
   );
-  kRegisterMessageFactory<CounterAttrDecremented2>(
-    CounterAttrDecremented2.fromJson,
+  kRegisterMessageFactory<CounterAttrDecremented>(
+    CounterAttrDecremented.fromJson,
   );
-  kRegisterMessageFactory<CounterAttrReset2>(
-    CounterAttrReset2.fromJson,
+  kRegisterMessageFactory<CounterAttrReset>(
+    CounterAttrReset.fromJson,
   );
 }
 
