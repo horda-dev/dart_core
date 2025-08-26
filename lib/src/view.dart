@@ -1,5 +1,5 @@
+import 'id.dart';
 import 'message.dart';
-import 'worker.dart';
 
 abstract class Change extends RemoteMessage {
   /// Whether changes of this type:

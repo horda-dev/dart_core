@@ -2,8 +2,8 @@ import 'package:json_annotation/json_annotation.dart';
 import 'package:logging/logging.dart';
 
 import 'error.dart';
+import 'id.dart';
 import 'view.dart';
-import 'worker.dart';
 
 part 'message.g.dart';
 

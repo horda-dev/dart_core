@@ -4,10 +4,10 @@ import 'package:json_annotation/json_annotation.dart';
 import 'package:logging/logging.dart';
 
 import 'error.dart';
+import 'id.dart';
 import 'message.dart';
 import 'query_def.dart';
 import 'query_res.dart';
-import 'worker.dart';
 
 part 'ws.g.dart';
 
