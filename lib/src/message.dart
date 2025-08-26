@@ -654,29 +654,11 @@ void kRegisterFluirMessage() {
 
   // value attr
 
-  kRegisterMessageFactory<RefValueAttributeChanged>(
-    RefValueAttributeChanged.fromJson,
-  );
-
-  // counter attr
-
-  kRegisterMessageFactory<CounterAttrIncremented>(
-    CounterAttrIncremented.fromJson,
-  );
-  kRegisterMessageFactory<CounterAttrDecremented>(
-    CounterAttrDecremented.fromJson,
-  );
-  kRegisterMessageFactory<CounterAttrReset>(
-    CounterAttrReset.fromJson,
-  );
-
-  // value attr v2
-
   kRegisterMessageFactory<RefValueAttributeChanged2>(
     RefValueAttributeChanged2.fromJson,
   );
 
-  // counter attr v2
+  // counter attr
 
   kRegisterMessageFactory<CounterAttrIncremented2>(
     CounterAttrIncremented2.fromJson,
