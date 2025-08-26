@@ -7,24 +7,24 @@ part of 'message.dart';
 // **************************************************************************
 
 ReplyFlow _$ReplyFlowFromJson(Map json) => ReplyFlow(
-      actorName: json['actorName'] as String,
-      flowName: json['flowName'] as String,
-      flowId: json['flowId'] as String,
-      callId: json['callId'] as String,
-    );
+  actorName: json['actorName'] as String,
+  flowName: json['flowName'] as String,
+  flowId: json['flowId'] as String,
+  callId: json['callId'] as String,
+);
 
 Map<String, dynamic> _$ReplyFlowToJson(ReplyFlow instance) => <String, dynamic>{
-      'actorName': instance.actorName,
-      'flowName': instance.flowName,
-      'flowId': instance.flowId,
-      'callId': instance.callId,
-    };
+  'actorName': instance.actorName,
+  'flowName': instance.flowName,
+  'flowId': instance.flowId,
+  'callId': instance.callId,
+};
 
 ReplyClient _$ReplyClientFromJson(Map json) => ReplyClient(
-      serverId: json['serverId'] as String,
-      sessionId: json['sid'] as String,
-      callId: json['callId'] as String,
-    );
+  serverId: json['serverId'] as String,
+  sessionId: json['sid'] as String,
+  callId: json['callId'] as String,
+);
 
 Map<String, dynamic> _$ReplyClientToJson(ReplyClient instance) =>
     <String, dynamic>{
@@ -44,11 +44,11 @@ FlowCallReplyEnvelop _$FlowCallReplyEnvelopFromJson(Map json) =>
     );
 
 FlowCallReplyOk _$FlowCallReplyOkFromJson(Map json) => FlowCallReplyOk(
-      eventType: json['eventType'] as String,
-      event: Map<String, dynamic>.from(json['event'] as Map),
-    );
+  eventType: json['eventType'] as String,
+  event: Map<String, dynamic>.from(json['event'] as Map),
+);
 
 FlowCallReplyErr _$FlowCallReplyErrFromJson(Map json) => FlowCallReplyErr(
-      errorType: json['errorType'] as String,
-      message: json['message'] as String,
-    );
+  errorType: json['errorType'] as String,
+  message: json['message'] as String,
+);
