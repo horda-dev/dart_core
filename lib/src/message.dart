@@ -2,9 +2,8 @@ import 'package:json_annotation/json_annotation.dart';
 import 'package:logging/logging.dart';
 
 import 'error.dart';
+import 'id.dart';
 import 'view.dart';
-import 'view2.dart';
-import 'worker.dart';
 
 part 'message.g.dart';
 
@@ -33,16 +32,12 @@ class FluirErrorEvent extends RemoteEvent {
   final String msg;
 
   factory FluirErrorEvent.fromJson(Map<String, dynamic> json) {
-    return FluirErrorEvent(
-      json['msg'],
-    );
+    return FluirErrorEvent(json['msg']);
   }
 
   @override
   Map<String, dynamic> toJson() {
-    return {
-      'msg': msg,
-    };
+    return {'msg': msg};
   }
 
   @override
@@ -56,66 +51,15 @@ class CommandEnvelop {
     required this.to,
     required this.from,
     required this.commandId,
-    required this.command,
-  });
-
-  final ActorId to;
-
-  final ActorId from;
-
-  final CommandId commandId;
-
-  final RemoteCommand command;
-
-  factory CommandEnvelop.fromJson(Map<String, dynamic> json) {
-    var type = json['type'];
-
-    if (type is! String) {
-      throw FluirError('invalid command type in $json');
-    }
-
-    var fac = kMsgFromJsonFac[type];
-    if (fac == null) {
-      throw FluirError('unregistered command type $type in $json');
-    }
-
-    return CommandEnvelop(
-      to: json['to'],
-      from: json['from'],
-      commandId: json['cid'],
-      command: fac(json['cmd']),
-    );
-  }
-
-  Map<String, dynamic> toJson() {
-    var map = {
-      'to': to,
-      'from': from,
-      'cid': commandId,
-      'type': command.runtimeType.toString(),
-      'cmd': command.toJson(),
-    };
-    return map;
-  }
-
-  @override
-  String toString() => '$command';
-}
-
-class CommandEnvelop2 {
-  CommandEnvelop2({
-    required this.to,
-    required this.from,
-    required this.commandId,
     required this.type,
     required this.command,
     required this.replyFlow,
     required this.replyClient,
   });
 
-  final ActorId to;
+  final EntityId to;
 
-  final ActorId from;
+  final EntityId from;
 
   final String commandId;
 
@@ -127,14 +71,14 @@ class CommandEnvelop2 {
 
   final ReplyClient replyClient;
 
-  factory CommandEnvelop2.fromJson(Map<String, dynamic> json) {
+  factory CommandEnvelop.fromJson(Map<String, dynamic> json) {
     final type = json['type'];
 
     if (type is! String) {
       throw FluirError('invalid command type in $json');
     }
 
-    return CommandEnvelop2(
+    return CommandEnvelop(
       to: json['to'],
       from: json['from'],
       commandId: json['cid'],
@@ -171,11 +115,7 @@ final class ReplyFlow {
     required this.callId,
   });
 
-  ReplyFlow.none()
-      : actorName = '',
-        flowName = '',
-        flowId = '',
-        callId = '';
+  ReplyFlow.none() : actorName = '', flowName = '', flowId = '', callId = '';
 
   final String actorName;
 
@@ -199,10 +139,7 @@ final class ReplyClient {
     required this.callId,
   });
 
-  ReplyClient.none()
-      : serverId = '',
-        sessionId = '',
-        callId = '';
+  ReplyClient.none() : serverId = '', sessionId = '', callId = '';
 
   final String serverId;
 
@@ -217,8 +154,8 @@ final class ReplyClient {
   Map<String, dynamic> toJson() => _$ReplyClientToJson(this);
 }
 
-class ChangeEnvelop2 {
-  ChangeEnvelop2({
+class ChangeEnvelop {
+  ChangeEnvelop({
     required this.changeId,
     required this.key,
     required this.name,
@@ -234,7 +171,7 @@ class ChangeEnvelop2 {
   }
 
   /// Constructor with empty [changeId]
-  ChangeEnvelop2.draft({
+  ChangeEnvelop.draft({
     required this.key,
     required this.name,
     required this.changes,
@@ -252,11 +189,9 @@ class ChangeEnvelop2 {
   /// in cases when it won't receive changes to project, but can be considered ready.
   ///
   /// They should be provided only by the server to the client and never stored.
-  ChangeEnvelop2.empty({
-    required this.key,
-    required this.name,
-  })  : changeId = '',
-        changes = <Change>[];
+  ChangeEnvelop.empty({required this.key, required this.name})
+    : changeId = '',
+      changes = <Change>[];
 
   /// Message id with which this envelop was saved in Pulsar
   final String changeId;
@@ -283,7 +218,7 @@ class ChangeEnvelop2 {
 
   String get sourceId => '$key/$name';
 
-  factory ChangeEnvelop2.fromJson(Map<String, dynamic> json) {
+  factory ChangeEnvelop.fromJson(Map<String, dynamic> json) {
     final deserializedChanges = <Change>[];
 
     if (json['view'] == null || json['view'] == '') {
@@ -294,10 +229,7 @@ class ChangeEnvelop2 {
     final changesJson = json['changes'] as List;
 
     if (changesJson.isEmpty) {
-      return ChangeEnvelop2.empty(
-        key: json['aid'],
-        name: name,
-      );
+      return ChangeEnvelop.empty(key: json['aid'], name: name);
     }
 
     for (final changeJson in changesJson) {
@@ -312,12 +244,10 @@ class ChangeEnvelop2 {
         throw FluirError('unregistered change type $type in $changeJson');
       }
 
-      deserializedChanges.add(
-        fac(changeJson['change']),
-      );
+      deserializedChanges.add(fac(changeJson['change']));
     }
 
-    return ChangeEnvelop2(
+    return ChangeEnvelop(
       changeId: json['chid'],
       key: json['aid'],
       name: name,
@@ -340,10 +270,7 @@ class ChangeEnvelop2 {
         typeName = changeType;
       }
 
-      changesJson.add({
-        'type': typeName,
-        'change': change.toJson(),
-      });
+      changesJson.add({'type': typeName, 'change': change.toJson()});
     }
 
     final map = {
@@ -360,8 +287,8 @@ class ChangeEnvelop2 {
   String toString() => 'changes: $changes';
 }
 
-class EventEnvelop2 {
-  EventEnvelop2({
+class EventEnvelop {
+  EventEnvelop({
     required this.actorId,
     required this.eventId,
     required this.commandId,
@@ -379,14 +306,14 @@ class EventEnvelop2 {
 
   final Map<String, dynamic> event;
 
-  factory EventEnvelop2.fromJson(Map<String, dynamic> json) {
+  factory EventEnvelop.fromJson(Map<String, dynamic> json) {
     var type = json['type'];
 
     if (type is! String) {
       throw FluirError('invalid event type in $json');
     }
 
-    return EventEnvelop2(
+    return EventEnvelop(
       eventId: json['eid'],
       actorId: json['aid'],
       commandId: json['cid'],
@@ -498,10 +425,7 @@ final class FlowCallReplyEnvelop {
 
 @JsonSerializable(anyMap: true, createToJson: false)
 final class FlowCallReplyOk {
-  FlowCallReplyOk({
-    required this.eventType,
-    required this.event,
-  });
+  FlowCallReplyOk({required this.eventType, required this.event});
 
   final String eventType;
 
@@ -512,10 +436,7 @@ final class FlowCallReplyOk {
 
 @JsonSerializable(anyMap: true, createToJson: false)
 final class FlowCallReplyErr {
-  FlowCallReplyErr({
-    required this.errorType,
-    required this.message,
-  });
+  FlowCallReplyErr({required this.errorType, required this.message});
 
   final String errorType;
 
@@ -539,283 +460,23 @@ class ChangeRecord {
   String toString() => 'Change: $change | version: $stateVersion';
 }
 
-class ChangeEnvelop {
-  ChangeEnvelop({
-    required this.id,
-    required this.name,
-    required this.changes,
-  }) {
-    assert(changes.isNotEmpty, 'Changes array must not be empty.');
-    assert(
-      isMonotone,
-      'Changes must be sequential and their versions monotone.',
-    );
-    assert(
-      changes.every((record) {
-        return record.change.isOverwriting ==
-            changes.first.change.isOverwriting;
-      }),
-      'Changes should belong to the same view type, so isOverwriting must be equal for all of them.',
-    );
-  }
-
-  /// Empty change envelops are only used to let views report their readiness
-  /// in cases when it won't receive changes to project, but can be considered ready.
-  ///
-  /// They should be provided only by the server to the client and never stored.
-  ChangeEnvelop.empty({
-    required this.id,
-    required this.name,
-  }) : changes = <ChangeRecord>[];
-
-  /// Actor id or attribute id.
-  final String id;
-
-  /// Actor's view name or attribute name.
-  final String name;
-
-  /// List of changes for a view or an attribute.
-  final List<ChangeRecord> changes;
-
-  /// Whether changes of this envelope:
-  /// - `true` - overwrite the previous version
-  /// - `false` - add up
-  ///
-  /// If `true`, only the last change is necessary to project.
-  bool get isOverwriting =>
-      changes.isEmpty ? false : changes.first.change.isOverwriting;
-
-  /// stateVersion of the first change
-  int get firstVersion => changes.isEmpty ? 0 : changes.first.stateVersion;
-
-  /// The resulting stateVersion after all included changes are projected
-  int get lastVersion => changes.isEmpty ? 0 : changes.last.stateVersion;
-
-  /// Check whether the list of [changes] is empty.
-  bool get isEmpty => changes.isEmpty;
-
-  /// Check if included [changes] versions increase monotonically: 1,2,3,4...
-  bool get isMonotone {
-    var version = firstVersion;
-    for (final record in changes.skip(1)) {
-      final stateVersion = record.stateVersion;
-
-      if (version != stateVersion - 1) return false;
-      version = stateVersion;
-    }
-    return true;
-  }
-
-  String get sourceId => '$id/$name';
-
-  factory ChangeEnvelop.fromJson(Map<String, dynamic> json) {
-    final deserializedChanges = <ChangeRecord>[];
-
-    if (json['view'] == null || json['view'] == '') {
-      throw FluirError('change viewName must be set and not empty.');
-    }
-
-    final name = json['view'];
-    final changesJson = json['changes'] as List;
-
-    if (changesJson.isEmpty) {
-      return ChangeEnvelop.empty(
-        id: json['aid'],
-        name: name,
-      );
-    }
-
-    for (final changeJson in changesJson) {
-      final type = changeJson['type'];
-
-      if (type is! String) {
-        throw FluirError('invalid type in $changeJson');
-      }
-
-      final fac = kMsgFromJsonFac[type];
-      if (fac == null) {
-        throw FluirError('unregistered change type $type in $changeJson');
-      }
-
-      if (changeJson['ver'] == null || changeJson['ver'] == 0) {
-        throw FluirError('change version must be set and not equal to 0');
-      }
-      final stateVersion = changeJson['ver'];
-
-      deserializedChanges.add(ChangeRecord(
-        change: fac(changeJson['change']),
-        stateVersion: stateVersion,
-      ));
-    }
-
-    return ChangeEnvelop(
-      id: json['aid'],
-      name: name,
-      changes: deserializedChanges,
-    );
-  }
-
-  Map<String, dynamic> toJson() {
-    final changesJson = [];
-    for (final record in changes) {
-      final ChangeRecord(:change, :stateVersion) = record;
-
-      // eliminate generic value type string
-      String typeName;
-      final changeType = change.runtimeType.toString();
-
-      if (changeType.startsWith('ValueViewCreated')) {
-        typeName = 'ValueViewCreated';
-      } else if (changeType.startsWith('ValueViewChanged')) {
-        typeName = 'ValueViewChanged';
-      } else {
-        typeName = changeType;
-      }
-
-      changesJson.add({
-        'type': typeName,
-        'change': change.toJson(),
-        'ver': stateVersion,
-      });
-    }
-
-    final map = {
-      'aid': id,
-      'changes': changesJson,
-      'view': name,
-    };
-
-    return map;
-  }
-
-  @override
-  String toString() => 'changes: $changes';
-}
-
-class EventEnvelop {
-  EventEnvelop({
-    required this.workerId,
-    required this.commandId,
-    required this.event,
-    this.dispatchId,
-  });
-
-  final ActorId workerId;
-
-  final CommandId commandId;
-
-  /// Used when dispatching events to associate an Event with a corresponding FlowResult.
-  /// Should be null otherwise.
-  final int? dispatchId;
-
-  final RemoteEvent event;
-
-  factory EventEnvelop.fromJson(Map<String, dynamic> json) {
-    final type = json['type'];
-
-    if (type is! String) {
-      throw FluirError('invalid type in $json');
-    }
-
-    final fac = kMsgFromJsonFac[type];
-    if (fac == null) {
-      throw FluirError('unregistered event type $type in $json');
-    }
-
-    final event = fac(json['event']);
-
-    return EventEnvelop(
-      workerId: json['aid'],
-      commandId: json['cid'],
-      event: event,
-    );
-  }
-
-  Map<String, dynamic> toJson() {
-    // eliminate generic value type string
-    final typeName = event.runtimeType.toString();
-
-    final map = {
-      'aid': workerId,
-      'cid': commandId,
-      'type': typeName,
-      'event': event.toJson(),
-    };
-
-    return map;
-  }
-
-  @override
-  String toString() => 'event: $event';
-}
-
-class FlowResult extends RemoteMessage {
-  FlowResult([this.value]) : isError = false;
+class FlowResult {
+  FlowResult.ok([this.value]) : isError = false;
 
   FlowResult.error(this.value) : isError = true;
 
   final String? value;
+
   final bool isError;
 
   factory FlowResult.fromJson(Map<String, dynamic> json) {
     return (json['isError'] as bool)
         ? FlowResult.error(json['value'])
-        : FlowResult(json['value']);
-  }
-
-  @override
-  Map<String, dynamic> toJson() {
-    return {
-      'value': value,
-      'isError': isError,
-    };
-  }
-}
-
-class FlowResult2 {
-  FlowResult2.ok([this.value]) : isError = false;
-
-  FlowResult2.error(this.value) : isError = true;
-
-  final String? value;
-
-  final bool isError;
-
-  factory FlowResult2.fromJson(Map<String, dynamic> json) {
-    return (json['isError'] as bool)
-        ? FlowResult2.error(json['value'])
-        : FlowResult2.ok(json['value']);
+        : FlowResult.ok(json['value']);
   }
 
   Map<String, dynamic> toJson() {
-    return {
-      'value': value,
-      'isError': isError,
-    };
-  }
-}
-
-@JsonSerializable()
-class FlowResultEnvelop {
-  FlowResultEnvelop({
-    required this.flowId,
-    required this.flowResult,
-    required this.dispatchId,
-  });
-
-  final String flowId;
-  final FlowResult flowResult;
-
-  /// Dispatch id of the event which triggered the flow.
-  /// Will be null when [FlowResult] was produced without dispatching.
-  final int? dispatchId;
-
-  factory FlowResultEnvelop.fromJson(Map<String, dynamic> json) {
-    return _$FlowResultEnvelopFromJson(json);
-  }
-
-  Map<String, dynamic> toJson() {
-    return _$FlowResultEnvelopToJson(this);
+    return {'value': value, 'isError': isError};
   }
 }
 
@@ -834,12 +495,7 @@ class ChangeId {
   /// Throws if string is invalid.
   factory ChangeId.fromString(String chIdStr) {
     if (chIdStr.isEmpty) {
-      return ChangeId(
-        ledgerId: 0,
-        entryId: 0,
-        batchIdx: 0,
-        partitionIdx: 0,
-      );
+      return ChangeId(ledgerId: 0, entryId: 0, batchIdx: 0, partitionIdx: 0);
     }
 
     final split = chIdStr.split(":");
@@ -914,15 +570,11 @@ class ChangeId {
 void kRegisterFluirMessage() {
   // error
 
-  kRegisterMessageFactory<FluirErrorEvent>(
-    FluirErrorEvent.fromJson,
-  );
+  kRegisterMessageFactory<FluirErrorEvent>(FluirErrorEvent.fromJson);
 
   // value view
 
-  kRegisterMessageFactory<ValueViewChanged>(
-    ValueViewChanged.fromJson,
-  );
+  kRegisterMessageFactory<ValueViewChanged>(ValueViewChanged.fromJson);
 
   // counter view
 
@@ -932,33 +584,21 @@ void kRegisterFluirMessage() {
   kRegisterMessageFactory<CounterViewDecremented>(
     CounterViewDecremented.fromJson,
   );
-  kRegisterMessageFactory<CounterViewReset>(
-    CounterViewReset.fromJson,
-  );
+  kRegisterMessageFactory<CounterViewReset>(CounterViewReset.fromJson);
 
   // ref view
 
-  kRegisterMessageFactory<RefViewChanged>(
-    RefViewChanged.fromJson,
-  );
+  kRegisterMessageFactory<RefViewChanged>(RefViewChanged.fromJson);
 
   // list view
 
-  kRegisterMessageFactory<ListViewCleared>(
-    ListViewCleared.fromJson,
-  );
-  kRegisterMessageFactory<ListViewItemAdded>(
-    ListViewItemAdded.fromJson,
-  );
+  kRegisterMessageFactory<ListViewCleared>(ListViewCleared.fromJson);
+  kRegisterMessageFactory<ListViewItemAdded>(ListViewItemAdded.fromJson);
   kRegisterMessageFactory<ListViewItemAddedIfAbsent>(
     ListViewItemAddedIfAbsent.fromJson,
   );
-  kRegisterMessageFactory<ListViewItemRemoved>(
-    ListViewItemRemoved.fromJson,
-  );
-  kRegisterMessageFactory<ListViewItemChanged>(
-    ListViewItemChanged.fromJson,
-  );
+  kRegisterMessageFactory<ListViewItemRemoved>(ListViewItemRemoved.fromJson);
+  kRegisterMessageFactory<ListViewItemChanged>(ListViewItemChanged.fromJson);
 
   // value attr
 
@@ -974,33 +614,13 @@ void kRegisterFluirMessage() {
   kRegisterMessageFactory<CounterAttrDecremented>(
     CounterAttrDecremented.fromJson,
   );
-  kRegisterMessageFactory<CounterAttrReset>(
-    CounterAttrReset.fromJson,
-  );
-
-  // value attr v2
-
-  kRegisterMessageFactory<RefValueAttributeChanged2>(
-    RefValueAttributeChanged2.fromJson,
-  );
-
-  // counter attr v2
-
-  kRegisterMessageFactory<CounterAttrIncremented2>(
-    CounterAttrIncremented2.fromJson,
-  );
-  kRegisterMessageFactory<CounterAttrDecremented2>(
-    CounterAttrDecremented2.fromJson,
-  );
-  kRegisterMessageFactory<CounterAttrReset2>(
-    CounterAttrReset2.fromJson,
-  );
+  kRegisterMessageFactory<CounterAttrReset>(CounterAttrReset.fromJson);
 }
 
 void kRegisterMessageFactory<T extends Message>(FromJsonFun<T> fun) {
   // eliminate generic value type string
   final typeName = switch (T) {
-    ValueViewChanged => 'ValueViewChanged',
+    ValueViewChanged _ => 'ValueViewChanged',
     _ => T.toString(),
   };
 

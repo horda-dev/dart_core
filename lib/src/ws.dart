@@ -4,9 +4,10 @@ import 'package:json_annotation/json_annotation.dart';
 import 'package:logging/logging.dart';
 
 import 'error.dart';
+import 'id.dart';
 import 'message.dart';
-import 'query.dart';
-import 'worker.dart';
+import 'query_def.dart';
+import 'query_res.dart';
 
 part 'ws.g.dart';
 
@@ -15,10 +16,7 @@ class WsMessageBox {
 
   final WsMessage msg;
 
-  WsMessageBox({
-    required this.id,
-    required this.msg,
-  });
+  WsMessageBox({required this.id, required this.msg});
 
   factory WsMessageBox.decodeJson(String str, Logger logger) {
     try {
@@ -46,6 +44,10 @@ class WsMessageBox {
         'dispatchres' => DispatchEventResWsMsg.fromJson,
         'subv' => SubscribeViewsWsMsg.fromJson,
         'subvack' => SubscribeViewsAckWsMsg.fromJson,
+        'suba' => SubscribeActorWsMsg.fromJson,
+        'subares' => SubscribeActorResWsMsg.fromJson,
+        'unsuba' => UnsubscribeActorWsMsg.fromJson,
+        'unsubares' => UnsubscribeActorResWsMsg.fromJson,
         'unsubv' => UnsubscribeViewsWsMsg.fromJson,
         'unsubvres' => UnsubscribeViewsResWsMsg.fromJson,
         'evt' => ActorEventWsMsg.fromJson,
@@ -54,17 +56,11 @@ class WsMessageBox {
         _ => throw FluirError('unknown type $type'),
       };
 
-      return WsMessageBox(
-        id: id,
-        msg: fac(json['msg']),
-      );
+      return WsMessageBox(id: id, msg: fac(json['msg']));
     } catch (e) {
       logger.severe('decode json error: $e');
 
-      return WsMessageBox(
-        id: -1,
-        msg: ErrorWsMsg(str, e.toString()),
-      );
+      return WsMessageBox(id: -1, msg: ErrorWsMsg(str, e.toString()));
     }
   }
 
@@ -72,29 +68,25 @@ class WsMessageBox {
     try {
       return jsonEncode({
         'id': id,
-        'type': msg.type,
+        'type': msg.messageType,
         'msg': msg.toJson(),
       });
     } catch (e) {
       final msg = '$id jsonEncode() error: $e';
       logger.severe(msg);
 
-      return jsonEncode({
-        'id': id,
-        'type': 'error',
-        'msg': msg,
-      });
+      return jsonEncode({'id': id, 'type': 'error', 'msg': msg});
     }
   }
 
   @override
   String toString() {
-    return 'WsMessageBox(id: $id, type: ${msg.type})';
+    return 'WsMessageBox(id: $id, type: ${msg.messageType})';
   }
 }
 
 sealed class WsMessage {
-  String get type;
+  String get messageType;
 
   Map<String, dynamic> toJson();
 }
@@ -107,8 +99,7 @@ class WelcomeWsMsg implements WsMessage {
   final String serverVersion;
 
   @override
-  @JsonKey(includeToJson: true)
-  final String type = 'welcome';
+  String get messageType => 'welcome';
 
   factory WelcomeWsMsg.fromJson(Map<String, dynamic> json) =>
       _$WelcomeWsMsgFromJson(json);
@@ -122,18 +113,12 @@ class WelcomeWsMsg implements WsMessage {
 
 @JsonSerializable()
 class QueryWsMsg implements WsMessage {
-  QueryWsMsg({
-    required this.actorId,
-    required this.name,
-    required this.def,
-  });
+  QueryWsMsg({required this.actorId, required this.def});
 
   @override
-  final String type = 'query';
+  String get messageType => 'query';
 
   final String actorId;
-
-  final String name;
 
   @JsonKey(fromJson: _defFromJson, toJson: _defToJson)
   final QueryDef def;
@@ -153,17 +138,15 @@ class QueryWsMsg implements WsMessage {
   }
 
   @override
-  String toString() => 'QueryWsMsg(name: $name, actor: $actorId)';
+  String toString() => 'QueryWsMsg(actor: $actorId)';
 }
 
 @JsonSerializable()
 class QueryResultWsMsg implements WsMessage {
-  QueryResultWsMsg({
-    required this.result,
-  });
+  QueryResultWsMsg({required this.result});
 
   @override
-  final String type = 'query_result';
+  String get messageType => 'query_result';
 
   @JsonKey(fromJson: _resFromJson, toJson: _resToJson)
   final QueryResult result;
@@ -185,7 +168,7 @@ class QueryResultWsMsg implements WsMessage {
 
 @JsonSerializable()
 class ActorViewSub {
-  ActorViewSub(this.id, this.name, this.version);
+  ActorViewSub(this.id, this.name, this.changeId);
 
   /// actor id or attribute id
   @JsonKey(name: 'id')
@@ -196,7 +179,7 @@ class ActorViewSub {
   final String name;
 
   @JsonKey(name: 'ver')
-  final int version;
+  final String changeId;
 
   factory ActorViewSub.fromJson(Map<String, dynamic> json) =>
       _$ActorViewSubFromJson(json);
@@ -205,7 +188,7 @@ class ActorViewSub {
 
   @override
   String toString() {
-    return '(id: $id, name: $name, ver: $version)';
+    return '(id: $id, name: $name, ver: $changeId)';
   }
 }
 
@@ -216,7 +199,7 @@ class SubscribeViewsWsMsg implements WsMessage {
   final List<ActorViewSub> subs;
 
   @override
-  final String type = 'subv';
+  String get messageType => 'subv';
 
   factory SubscribeViewsWsMsg.fromJson(Map<String, dynamic> json) =>
       _$SubscribeViewsWsMsgFromJson(json);
@@ -233,7 +216,7 @@ class SubscribeViewsAckWsMsg implements WsMessage {
   SubscribeViewsAckWsMsg();
 
   @override
-  final String type = 'subvack';
+  String get messageType => 'subvack';
 
   factory SubscribeViewsAckWsMsg.fromJson(Map<String, dynamic> json) =>
       _$SubscribeViewsAckWsMsgFromJson(json);
@@ -246,13 +229,85 @@ class SubscribeViewsAckWsMsg implements WsMessage {
 }
 
 @JsonSerializable()
+class SubscribeActorWsMsg implements WsMessage {
+  SubscribeActorWsMsg(this.actorId);
+
+  final EntityId actorId;
+
+  @override
+  String get messageType => 'suba';
+
+  factory SubscribeActorWsMsg.fromJson(Map<String, dynamic> json) =>
+      _$SubscribeActorWsMsgFromJson(json);
+
+  @override
+  Map<String, dynamic> toJson() => _$SubscribeActorWsMsgToJson(this);
+
+  @override
+  String toString() => 'SubscribeActor($actorId)';
+}
+
+@JsonSerializable()
+class SubscribeActorResWsMsg implements WsMessage {
+  SubscribeActorResWsMsg();
+
+  @override
+  String get messageType => 'subares';
+
+  factory SubscribeActorResWsMsg.fromJson(Map<String, dynamic> json) =>
+      _$SubscribeActorResWsMsgFromJson(json);
+
+  @override
+  Map<String, dynamic> toJson() => _$SubscribeActorResWsMsgToJson(this);
+
+  @override
+  String toString() => 'SubscribeActorRes()';
+}
+
+@JsonSerializable()
+class UnsubscribeActorWsMsg implements WsMessage {
+  UnsubscribeActorWsMsg(this.actorId);
+
+  final EntityId actorId;
+
+  @override
+  String get messageType => 'unsuba';
+
+  factory UnsubscribeActorWsMsg.fromJson(Map<String, dynamic> json) =>
+      _$UnsubscribeActorWsMsgFromJson(json);
+
+  @override
+  Map<String, dynamic> toJson() => _$UnsubscribeActorWsMsgToJson(this);
+
+  @override
+  String toString() => 'UnsubscribeActor($actorId)';
+}
+
+@JsonSerializable()
+class UnsubscribeActorResWsMsg implements WsMessage {
+  UnsubscribeActorResWsMsg();
+
+  @override
+  String get messageType => 'unsubares';
+
+  factory UnsubscribeActorResWsMsg.fromJson(Map<String, dynamic> json) =>
+      _$UnsubscribeActorResWsMsgFromJson(json);
+
+  @override
+  Map<String, dynamic> toJson() => _$UnsubscribeActorResWsMsgToJson(this);
+
+  @override
+  String toString() => 'UnsubscribeActorRes()';
+}
+
+@JsonSerializable()
 class UnsubscribeViewsWsMsg implements WsMessage {
   UnsubscribeViewsWsMsg(this.subs);
 
   final List<ActorViewSub> subs;
 
   @override
-  final String type = 'unsubv';
+  String get messageType => 'unsubv';
 
   factory UnsubscribeViewsWsMsg.fromJson(Map<String, dynamic> json) =>
       _$UnsubscribeViewsWsMsgFromJson(json);
@@ -269,7 +324,7 @@ class UnsubscribeViewsResWsMsg implements WsMessage {
   UnsubscribeViewsResWsMsg();
 
   @override
-  final String type = 'unsubvres';
+  String get messageType => 'unsubvres';
 
   factory UnsubscribeViewsResWsMsg.fromJson(Map<String, dynamic> json) =>
       _$UnsubscribeViewsResWsMsgFromJson(json);
@@ -288,7 +343,7 @@ class ActorEventWsMsg implements WsMessage {
   final EventEnvelop env;
 
   @override
-  final String type = 'evt';
+  String get messageType => 'evt';
 
   factory ActorEventWsMsg.fromJson(Map<String, dynamic> json) =>
       _$ActorEventWsMsgFromJson(json);
@@ -297,7 +352,7 @@ class ActorEventWsMsg implements WsMessage {
   Map<String, dynamic> toJson() => _$ActorEventWsMsgToJson(this);
 
   @override
-  String toString() => 'ActorEvent($env)';
+  String toString() => 'ActorEvent(${env.toJson()})';
 }
 
 @JsonSerializable()
@@ -307,7 +362,7 @@ class ViewChangeWsMsg implements WsMessage {
   final ChangeEnvelop env;
 
   @override
-  final String type = 'chg';
+  String get messageType => 'chg';
 
   factory ViewChangeWsMsg.fromJson(Map<String, dynamic> json) =>
       _$ViewChangeWsMsgFromJson(json);
@@ -320,14 +375,16 @@ class ViewChangeWsMsg implements WsMessage {
 }
 
 class SendCommandWsMsg implements WsMessage {
-  SendCommandWsMsg(this.to, this.cmd);
+  SendCommandWsMsg(this.actorName, this.to, this.cmd);
 
-  final ActorId to;
+  final String actorName;
+
+  final EntityId to;
 
   final RemoteCommand cmd;
 
   @override
-  final String type = 'send';
+  String get messageType => 'send';
 
   factory SendCommandWsMsg.fromJson(Map<String, dynamic> json) {
     var type = json['type'] as String;
@@ -336,15 +393,13 @@ class SendCommandWsMsg implements WsMessage {
       throw FluirError('unregistered command type $type in $json');
     }
 
-    return SendCommandWsMsg(
-      json['to'],
-      fac(json['cmd']),
-    );
+    return SendCommandWsMsg(json['actorName'], json['to'], fac(json['cmd']));
   }
 
   @override
   Map<String, dynamic> toJson() {
     return {
+      'actorName': actorName,
       'to': to,
       'type': cmd.runtimeType.toString(),
       'cmd': cmd.toJson(),
@@ -352,7 +407,7 @@ class SendCommandWsMsg implements WsMessage {
   }
 
   @override
-  String toString() => 'SendCmd($cmd)';
+  String toString() => 'SendCmd(${toJson()})';
 }
 
 @JsonSerializable()
@@ -360,7 +415,7 @@ class SendCommandAckWsMsg implements WsMessage {
   SendCommandAckWsMsg();
 
   @override
-  final String type = 'sendack';
+  String get messageType => 'sendack';
 
   factory SendCommandAckWsMsg.fromJson(Map<String, dynamic> json) =>
       _$SendCommandAckWsMsgFromJson(json);
@@ -373,16 +428,16 @@ class SendCommandAckWsMsg implements WsMessage {
 }
 
 class CallCommandWsMsg implements WsMessage {
-  CallCommandWsMsg(this.to, this.cmd, this.timeout);
+  CallCommandWsMsg(this.actorName, this.to, this.cmd);
 
-  final ActorId to;
+  final String actorName;
+
+  final EntityId to;
 
   final RemoteCommand cmd;
 
-  final Duration timeout;
-
   @override
-  final String type = 'call';
+  String get messageType => 'call';
 
   factory CallCommandWsMsg.fromJson(Map<String, dynamic> json) {
     var type = json['type'] as String;
@@ -391,35 +446,33 @@ class CallCommandWsMsg implements WsMessage {
       throw FluirError('unregistered command type $type in $json');
     }
 
-    return CallCommandWsMsg(
-      json['to'],
-      fac(json['cmd']),
-      Duration(milliseconds: json['timeout']),
-    );
+    return CallCommandWsMsg(json['actorName'], json['to'], fac(json['cmd']));
   }
 
   @override
   Map<String, dynamic> toJson() {
     return {
+      'actorName': actorName,
       'to': to,
       'type': cmd.runtimeType.toString(),
       'cmd': cmd.toJson(),
-      'timeout': timeout.inMilliseconds,
     };
   }
 
   @override
-  String toString() => 'CallCmd($cmd)';
+  String toString() => 'CallCmd(${toJson()})';
 }
 
 @JsonSerializable()
 class CallCommandResWsMsg implements WsMessage {
-  CallCommandResWsMsg(this.env);
+  CallCommandResWsMsg(this.isOk, this.reply);
 
-  final EventEnvelop env;
+  final bool isOk;
+
+  final Map<String, dynamic> reply;
 
   @override
-  final String type = 'callres';
+  String get messageType => 'callres';
 
   factory CallCommandResWsMsg.fromJson(Map<String, dynamic> json) =>
       _$CallCommandResWsMsgFromJson(json);
@@ -428,17 +481,16 @@ class CallCommandResWsMsg implements WsMessage {
   Map<String, dynamic> toJson() => _$CallCommandResWsMsgToJson(this);
 
   @override
-  String toString() => 'CallResCmd($env)';
+  String toString() => 'CallResCmd(${toJson()})';
 }
 
 class DispatchEventWsMsg implements WsMessage {
-  DispatchEventWsMsg(this.event, this.timeout);
+  DispatchEventWsMsg(this.event);
 
   final RemoteEvent event;
-  final Duration timeout;
 
   @override
-  final type = 'dispatch';
+  final messageType = 'dispatch';
 
   factory DispatchEventWsMsg.fromJson(Map<String, dynamic> json) {
     final type = json['type'] as String;
@@ -447,30 +499,28 @@ class DispatchEventWsMsg implements WsMessage {
       throw FluirError('unregistered event type $type in $json');
     }
 
-    return DispatchEventWsMsg(
-      fac(json['event']),
-      Duration(milliseconds: json['timeout']),
-    );
+    return DispatchEventWsMsg(fac(json['event']));
   }
 
   @override
   Map<String, dynamic> toJson() {
-    return {
-      'type': event.runtimeType.toString(),
-      'event': event.toJson(),
-      'timeout': timeout.inMilliseconds,
-    };
+    return {'type': event.runtimeType.toString(), 'event': event.toJson()};
   }
+
+  @override
+  String toString() =>
+      'DispatchEvent(${event.runtimeType} | ${event.toJson()})';
 }
 
 @JsonSerializable()
 class DispatchEventResWsMsg implements WsMessage {
-  DispatchEventResWsMsg(this.env);
+  DispatchEventResWsMsg(this.result);
 
-  final FlowResultEnvelop env;
+  @JsonKey(name: 'flowResult')
+  final FlowResult result;
 
   @override
-  final type = 'dispatchres';
+  final messageType = 'dispatchres';
 
   factory DispatchEventResWsMsg.fromJson(Map<String, dynamic> json) {
     return _$DispatchEventResWsMsgFromJson(json);
@@ -480,19 +530,21 @@ class DispatchEventResWsMsg implements WsMessage {
   Map<String, dynamic> toJson() {
     return _$DispatchEventResWsMsgToJson(this);
   }
+
+  @override
+  String toString() => 'DispatchEventRes(${result.value} | ${result.isError})';
 }
 
 @JsonSerializable()
 class ErrorWsMsg implements WsMessage {
-  ErrorWsMsg(this.text, this.error);
+  ErrorWsMsg(this.type, this.error);
 
-  final String text;
+  final String type;
 
-  // TODO: change to string, not all errors can be converted to json
-  final dynamic error;
+  final String error;
 
   @override
-  final String type = 'error';
+  String get messageType => 'error';
 
   factory ErrorWsMsg.fromJson(Map<String, dynamic> json) =>
       _$ErrorWsMsgFromJson(json);
@@ -501,5 +553,5 @@ class ErrorWsMsg implements WsMessage {
   Map<String, dynamic> toJson() => _$ErrorWsMsgToJson(this);
 
   @override
-  String toString() => 'ErrorWsMsg(text: $text, e: $error)';
+  String toString() => 'ErrorWsMsg(type: $type, e: $error)';
 }

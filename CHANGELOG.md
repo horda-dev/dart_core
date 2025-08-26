@@ -1,3 +1,8 @@
+## 0.13.0
+
+ - **BREAKING CHANGE**: rename public API
+ - **CHORE**: remove dead code
+
 ## 0.12.18
 
  - **FEAT**: service type.

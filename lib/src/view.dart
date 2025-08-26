@@ -1,5 +1,5 @@
+import 'id.dart';
 import 'message.dart';
-import 'worker.dart';
 
 abstract class Change extends RemoteMessage {
   /// Whether changes of this type:
@@ -21,9 +21,7 @@ class ValueViewChanged<T> extends ValueViewChange {
   final T newValue;
 
   factory ValueViewChanged.fromJson(Map<String, dynamic> json) {
-    return ValueViewChanged<T>(
-      _valueFromJson<T>(json),
-    );
+    return ValueViewChanged<T>(_valueFromJson<T>(json));
   }
 
   @override
@@ -58,10 +56,7 @@ Map<String, dynamic> _valueToJson<T>(T value) {
     val = val.millisecondsSinceEpoch;
   }
 
-  return {
-    'val': val,
-    'type': T.toString(),
-  };
+  return {'val': val, 'type': T.toString()};
 }
 
 abstract class CounterViewChange extends Change {
@@ -75,16 +70,12 @@ class CounterViewIncremented extends CounterViewChange {
   final int by;
 
   factory CounterViewIncremented.fromJson(Map<String, dynamic> json) {
-    return CounterViewIncremented(
-      by: json['by'],
-    );
+    return CounterViewIncremented(by: json['by']);
   }
 
   @override
   Map<String, dynamic> toJson() {
-    return {
-      'by': by,
-    };
+    return {'by': by};
   }
 }
 
@@ -94,16 +85,12 @@ class CounterViewDecremented extends CounterViewChange {
   final int by;
 
   factory CounterViewDecremented.fromJson(Map<String, dynamic> json) {
-    return CounterViewDecremented(
-      by: json['by'],
-    );
+    return CounterViewDecremented(by: json['by']);
   }
 
   @override
   Map<String, dynamic> toJson() {
-    return {
-      'by': by,
-    };
+    return {'by': by};
   }
 }
 
@@ -113,16 +100,12 @@ class CounterViewReset extends CounterViewChange {
   final int newValue;
 
   factory CounterViewReset.fromJson(Map<String, dynamic> json) {
-    return CounterViewReset(
-      newValue: json['val'],
-    );
+    return CounterViewReset(newValue: json['val']);
   }
 
   @override
   Map<String, dynamic> toJson() {
-    return {
-      'val': newValue,
-    };
+    return {'val': newValue};
   }
 }
 
@@ -135,19 +118,15 @@ abstract class RefViewChange extends Change {
 class RefViewChanged extends RefViewChange {
   RefViewChanged(this.newValue);
 
-  final ActorId? newValue;
+  final EntityId? newValue;
 
   factory RefViewChanged.fromJson(Map<String, dynamic> json) {
-    return RefViewChanged(
-      json['val'],
-    );
+    return RefViewChanged(json['val']);
   }
 
   @override
   Map<String, dynamic> toJson() {
-    return {
-      'val': newValue,
-    };
+    return {'val': newValue};
   }
 
   @override
@@ -163,19 +142,15 @@ abstract class ListViewChange extends Change {
 class ListViewItemAdded extends ListViewChange {
   ListViewItemAdded(this.itemId);
 
-  final ActorId itemId;
+  final EntityId itemId;
 
   factory ListViewItemAdded.fromJson(Map<String, dynamic> json) {
-    return ListViewItemAdded(
-      json['item'],
-    );
+    return ListViewItemAdded(json['item']);
   }
 
   @override
   Map<String, dynamic> toJson() {
-    return {
-      'item': itemId,
-    };
+    return {'item': itemId};
   }
 
   @override
@@ -185,19 +160,15 @@ class ListViewItemAdded extends ListViewChange {
 class ListViewItemAddedIfAbsent extends ListViewChange {
   ListViewItemAddedIfAbsent(this.itemId);
 
-  final ActorId itemId;
+  final EntityId itemId;
 
   factory ListViewItemAddedIfAbsent.fromJson(Map<String, dynamic> json) {
-    return ListViewItemAddedIfAbsent(
-      json['item'],
-    );
+    return ListViewItemAddedIfAbsent(json['item']);
   }
 
   @override
   Map<String, dynamic> toJson() {
-    return {
-      'item': itemId,
-    };
+    return {'item': itemId};
   }
 
   @override
@@ -207,28 +178,24 @@ class ListViewItemAddedIfAbsent extends ListViewChange {
 class ListViewItemRemoved extends ListViewChange {
   ListViewItemRemoved(this.itemId);
 
-  final ActorId itemId;
+  final EntityId itemId;
 
   factory ListViewItemRemoved.fromJson(Map<String, dynamic> json) {
-    return ListViewItemRemoved(
-      json['item'],
-    );
+    return ListViewItemRemoved(json['item']);
   }
 
   @override
   Map<String, dynamic> toJson() {
-    return {
-      'item': itemId,
-    };
+    return {'item': itemId};
   }
 }
 
 class ListViewItemChanged extends ListViewChange {
   ListViewItemChanged({required this.oldItemId, required this.newItemId});
 
-  final ActorId oldItemId;
+  final EntityId oldItemId;
 
-  final ActorId newItemId;
+  final EntityId newItemId;
 
   factory ListViewItemChanged.fromJson(Map<String, dynamic> json) {
     return ListViewItemChanged(
@@ -239,33 +206,24 @@ class ListViewItemChanged extends ListViewChange {
 
   @override
   Map<String, dynamic> toJson() {
-    return {
-      'oitem': oldItemId,
-      'nitem': newItemId,
-    };
+    return {'oitem': oldItemId, 'nitem': newItemId};
   }
 }
 
 class ListViewItemMoved extends ListViewChange {
   ListViewItemMoved(this.itemId, this.newIndex);
 
-  final ActorId itemId;
+  final EntityId itemId;
 
   final int newIndex;
 
   factory ListViewItemMoved.fromJson(Map<String, dynamic> json) {
-    return ListViewItemMoved(
-      json['item'],
-      json['idx'],
-    );
+    return ListViewItemMoved(json['item'], json['idx']);
   }
 
   @override
   Map<String, dynamic> toJson() {
-    return {
-      'item': itemId,
-      'idx': newIndex,
-    };
+    return {'item': itemId, 'idx': newIndex};
   }
 }
 
@@ -282,10 +240,25 @@ class ListViewCleared extends ListViewChange {
   }
 }
 
-class RefValueAttributeChanged extends Change {
+typedef RefIdNamePair = ({String itemId, String name});
+
+abstract class AttributeChange extends Change {
+  EntityId get attrId;
+  String get attrName;
+}
+
+class RefValueAttributeChanged extends AttributeChange {
   RefValueAttributeChanged({
+    required this.attrId,
+    required this.attrName,
     required this.newValue,
   });
+
+  @override
+  final EntityId attrId;
+
+  @override
+  final String attrName;
 
   final dynamic newValue;
 
@@ -294,20 +267,30 @@ class RefValueAttributeChanged extends Change {
 
   factory RefValueAttributeChanged.fromJson(Map<String, dynamic> json) {
     return RefValueAttributeChanged(
+      attrId: json['id'],
+      attrName: json['name'],
       newValue: json['val'],
     );
   }
 
   @override
   Map<String, dynamic> toJson() {
-    return {
-      'val': newValue,
-    };
+    return {'id': attrId, 'name': attrName, 'val': newValue};
   }
 }
 
-class CounterAttrIncremented extends Change {
-  CounterAttrIncremented({required this.by});
+class CounterAttrIncremented extends AttributeChange {
+  CounterAttrIncremented({
+    required this.attrId,
+    required this.attrName,
+    required this.by,
+  });
+
+  @override
+  final EntityId attrId;
+
+  @override
+  final String attrName;
 
   final int by;
 
@@ -316,20 +299,30 @@ class CounterAttrIncremented extends Change {
 
   factory CounterAttrIncremented.fromJson(Map<String, dynamic> json) {
     return CounterAttrIncremented(
+      attrId: json['id'],
+      attrName: json['name'],
       by: json['by'],
     );
   }
 
   @override
   Map<String, dynamic> toJson() {
-    return {
-      'by': by,
-    };
+    return {'id': attrId, 'name': attrName, 'by': by};
   }
 }
 
-class CounterAttrDecremented extends Change {
-  CounterAttrDecremented({required this.by});
+class CounterAttrDecremented extends AttributeChange {
+  CounterAttrDecremented({
+    required this.attrId,
+    required this.attrName,
+    required this.by,
+  });
+
+  @override
+  final EntityId attrId;
+
+  @override
+  final String attrName;
 
   final int by;
 
@@ -338,20 +331,30 @@ class CounterAttrDecremented extends Change {
 
   factory CounterAttrDecremented.fromJson(Map<String, dynamic> json) {
     return CounterAttrDecremented(
+      attrId: json['id'],
+      attrName: json['name'],
       by: json['by'],
     );
   }
 
   @override
   Map<String, dynamic> toJson() {
-    return {
-      'by': by,
-    };
+    return {'id': attrId, 'name': attrName, 'by': by};
   }
 }
 
-class CounterAttrReset extends Change {
-  CounterAttrReset({required this.newValue});
+class CounterAttrReset extends AttributeChange {
+  CounterAttrReset({
+    required this.attrId,
+    required this.attrName,
+    required this.newValue,
+  });
+
+  @override
+  final EntityId attrId;
+
+  @override
+  final String attrName;
 
   final int newValue;
 
@@ -360,16 +363,14 @@ class CounterAttrReset extends Change {
 
   factory CounterAttrReset.fromJson(Map<String, dynamic> json) {
     return CounterAttrReset(
+      attrId: json['id'],
+      attrName: json['name'],
       newValue: json['val'],
     );
   }
 
   @override
   Map<String, dynamic> toJson() {
-    return {
-      'val': newValue,
-    };
+    return {'id': attrId, 'name': attrName, 'val': newValue};
   }
 }
-
-typedef RefIdNamePair = ({String itemId, String name});
