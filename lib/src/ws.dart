@@ -5,8 +5,8 @@ import 'package:logging/logging.dart';
 
 import 'error.dart';
 import 'message.dart';
-import 'query.dart';
-import 'query2.dart';
+import 'query_def.dart';
+import 'query_res.dart';
 import 'worker.dart';
 
 part 'ws.g.dart';

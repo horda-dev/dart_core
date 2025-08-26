@@ -3,7 +3,6 @@ import 'package:logging/logging.dart';
 
 import 'error.dart';
 import 'view.dart';
-import 'view2.dart';
 import 'worker.dart';
 
 part 'message.g.dart';
