@@ -1,8 +1,8 @@
 import 'package:collection/collection.dart';
 
 import 'error.dart';
+import 'id.dart';
 import 'view.dart';
-import 'worker.dart';
 
 class ViewSnapshot2 {
   ViewSnapshot2(this.value, this.changeId);
