@@ -156,7 +156,7 @@ class RefQueryResult extends ViewQueryResult {
   RefQueryResult(super.value, this.attrs, super.changeId, this.query);
 
   @override
-  ActorId? get value => super.value;
+  EntityId? get value => super.value;
 
   final QueryResult? query;
 
@@ -165,7 +165,7 @@ class RefQueryResult extends ViewQueryResult {
   factory RefQueryResult.fromJson(Map<String, dynamic> json) {
     assert(json['type'] == 'ref');
 
-    ActorId? val = json['val'];
+    EntityId? val = json['val'];
     Map<String, dynamic> attrs = Map.from(json['attrs'] ?? {});
     Map<String, dynamic>? refJson = json['ref'];
     String ver = json['chid'];
@@ -199,7 +199,7 @@ class ListQueryResult extends ViewQueryResult {
   );
 
   @override
-  Iterable<ActorId> get value => super.value;
+  Iterable<EntityId> get value => super.value;
 
   final Iterable<QueryResult> items;
 
@@ -209,16 +209,16 @@ class ListQueryResult extends ViewQueryResult {
   factory ListQueryResult.fromJson(Map<String, dynamic> json) {
     assert(json['type'] == 'list');
 
-    List<ActorId> val = List<ActorId>.from(json['val']);
+    List<EntityId> val = List<EntityId>.from(json['val']);
     Map<String, Map<String, dynamic>> attrs = Map.from(json['attrs'] ?? {});
     List<Map<String, dynamic>> itemsJson = List.from(json['items']);
     String ver = json['chid'];
 
-    var value = <ActorId>[];
+    var value = <EntityId>[];
     var items = <QueryResult>[];
 
     for (var pair in IterableZip([val, itemsJson])) {
-      value.add(pair[0] as ActorId);
+      value.add(pair[0] as EntityId);
       items.add(QueryResult.fromJson(pair[1] as Map<String, dynamic>));
     }
 
@@ -332,7 +332,7 @@ extension QueryResultBuilderManual on QueryResultBuilder {
 
   void ref(
     String name,
-    ActorId value,
+    EntityId value,
     Map<String, dynamic> attrs,
     String changeId,
     void Function(QueryResultBuilder rb) fun,
@@ -353,7 +353,7 @@ extension QueryResultBuilderManual on QueryResultBuilder {
     String name,
     Map<RefIdNamePair, dynamic> attrs,
     String changeId,
-    void Function(Map<ActorId, QueryResultBuilder> items) fun,
+    void Function(Map<EntityId, QueryResultBuilder> items) fun,
   ) {
     final attrsMap = <String, Map<String, dynamic>>{};
 
@@ -362,7 +362,7 @@ extension QueryResultBuilderManual on QueryResultBuilder {
       attr[kv.key.name] = kv.value;
     }
 
-    var items = <ActorId, QueryResultBuilder>{};
+    var items = <EntityId, QueryResultBuilder>{};
     fun(items);
     add(ListQueryResultBuilder(
       name,
@@ -373,8 +373,8 @@ extension QueryResultBuilderManual on QueryResultBuilder {
   }
 }
 
-extension ListQueryResultBuilderManual on Map<ActorId, QueryResultBuilder> {
-  void item(ActorId actorId, void Function(QueryResultBuilder rb) fun) {
+extension ListQueryResultBuilderManual on Map<EntityId, QueryResultBuilder> {
+  void item(EntityId actorId, void Function(QueryResultBuilder rb) fun) {
     var qrb = QueryResultBuilder();
     fun(qrb);
     this[actorId] = qrb;

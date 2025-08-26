@@ -250,7 +250,7 @@ class SubscribeViewsAckWsMsg implements WsMessage {
 class SubscribeActorWsMsg implements WsMessage {
   SubscribeActorWsMsg(this.actorId);
 
-  final ActorId actorId;
+  final EntityId actorId;
 
   @override
   String get messageType => 'suba';
@@ -286,7 +286,7 @@ class SubscribeActorResWsMsg implements WsMessage {
 class UnsubscribeActorWsMsg implements WsMessage {
   UnsubscribeActorWsMsg(this.actorId);
 
-  final ActorId actorId;
+  final EntityId actorId;
 
   @override
   String get messageType => 'unsuba';
@@ -397,7 +397,7 @@ class SendCommandWsMsg implements WsMessage {
 
   final String actorName;
 
-  final ActorId to;
+  final EntityId to;
 
   final RemoteCommand cmd;
 
@@ -454,7 +454,7 @@ class CallCommandWsMsg implements WsMessage {
 
   final String actorName;
 
-  final ActorId to;
+  final EntityId to;
 
   final RemoteCommand cmd;
 

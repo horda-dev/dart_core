@@ -135,7 +135,7 @@ abstract class RefViewChange extends Change {
 class RefViewChanged extends RefViewChange {
   RefViewChanged(this.newValue);
 
-  final ActorId? newValue;
+  final EntityId? newValue;
 
   factory RefViewChanged.fromJson(Map<String, dynamic> json) {
     return RefViewChanged(
@@ -163,7 +163,7 @@ abstract class ListViewChange extends Change {
 class ListViewItemAdded extends ListViewChange {
   ListViewItemAdded(this.itemId);
 
-  final ActorId itemId;
+  final EntityId itemId;
 
   factory ListViewItemAdded.fromJson(Map<String, dynamic> json) {
     return ListViewItemAdded(
@@ -185,7 +185,7 @@ class ListViewItemAdded extends ListViewChange {
 class ListViewItemAddedIfAbsent extends ListViewChange {
   ListViewItemAddedIfAbsent(this.itemId);
 
-  final ActorId itemId;
+  final EntityId itemId;
 
   factory ListViewItemAddedIfAbsent.fromJson(Map<String, dynamic> json) {
     return ListViewItemAddedIfAbsent(
@@ -207,7 +207,7 @@ class ListViewItemAddedIfAbsent extends ListViewChange {
 class ListViewItemRemoved extends ListViewChange {
   ListViewItemRemoved(this.itemId);
 
-  final ActorId itemId;
+  final EntityId itemId;
 
   factory ListViewItemRemoved.fromJson(Map<String, dynamic> json) {
     return ListViewItemRemoved(
@@ -226,9 +226,9 @@ class ListViewItemRemoved extends ListViewChange {
 class ListViewItemChanged extends ListViewChange {
   ListViewItemChanged({required this.oldItemId, required this.newItemId});
 
-  final ActorId oldItemId;
+  final EntityId oldItemId;
 
-  final ActorId newItemId;
+  final EntityId newItemId;
 
   factory ListViewItemChanged.fromJson(Map<String, dynamic> json) {
     return ListViewItemChanged(
@@ -249,7 +249,7 @@ class ListViewItemChanged extends ListViewChange {
 class ListViewItemMoved extends ListViewChange {
   ListViewItemMoved(this.itemId, this.newIndex);
 
-  final ActorId itemId;
+  final EntityId itemId;
 
   final int newIndex;
 
@@ -285,7 +285,7 @@ class ListViewCleared extends ListViewChange {
 typedef RefIdNamePair = ({String itemId, String name});
 
 abstract class AttributeChange extends Change {
-  ActorId get attrId;
+  EntityId get attrId;
   String get attrName;
 }
 
@@ -297,7 +297,7 @@ class RefValueAttributeChanged extends AttributeChange {
   });
 
   @override
-  final ActorId attrId;
+  final EntityId attrId;
 
   @override
   final String attrName;
@@ -333,7 +333,7 @@ class CounterAttrIncremented extends AttributeChange {
   });
 
   @override
-  final ActorId attrId;
+  final EntityId attrId;
 
   @override
   final String attrName;
@@ -369,7 +369,7 @@ class CounterAttrDecremented extends AttributeChange {
   });
 
   @override
-  final ActorId attrId;
+  final EntityId attrId;
 
   @override
   final String attrName;
@@ -405,7 +405,7 @@ class CounterAttrReset extends AttributeChange {
   });
 
   @override
-  final ActorId attrId;
+  final EntityId attrId;
 
   @override
   final String attrName;

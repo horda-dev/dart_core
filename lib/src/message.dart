@@ -61,9 +61,9 @@ class CommandEnvelop {
     required this.replyClient,
   });
 
-  final ActorId to;
+  final EntityId to;
 
-  final ActorId from;
+  final EntityId from;
 
   final String commandId;
 
