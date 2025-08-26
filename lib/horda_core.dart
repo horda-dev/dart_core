@@ -7,4 +7,3 @@ export 'src/view.dart';
 export 'src/view2.dart';
 export 'src/worker.dart';
 export 'src/ws.dart';
-export 'src/ws2.dart';

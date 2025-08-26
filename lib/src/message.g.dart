@@ -52,18 +52,3 @@ FlowCallReplyErr _$FlowCallReplyErrFromJson(Map json) => FlowCallReplyErr(
       errorType: json['errorType'] as String,
       message: json['message'] as String,
     );
-
-FlowResultEnvelop _$FlowResultEnvelopFromJson(Map<String, dynamic> json) =>
-    FlowResultEnvelop(
-      flowId: json['flowId'] as String,
-      flowResult:
-          FlowResult.fromJson(json['flowResult'] as Map<String, dynamic>),
-      dispatchId: (json['dispatchId'] as num?)?.toInt(),
-    );
-
-Map<String, dynamic> _$FlowResultEnvelopToJson(FlowResultEnvelop instance) =>
-    <String, dynamic>{
-      'flowId': instance.flowId,
-      'flowResult': instance.flowResult,
-      'dispatchId': instance.dispatchId,
-    };

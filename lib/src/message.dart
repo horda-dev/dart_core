@@ -749,42 +749,19 @@ class EventEnvelop {
   String toString() => 'event: $event';
 }
 
-class FlowResult extends RemoteMessage {
-  FlowResult([this.value]) : isError = false;
+class FlowResult {
+  FlowResult.ok([this.value]) : isError = false;
 
   FlowResult.error(this.value) : isError = true;
 
   final String? value;
+
   final bool isError;
 
   factory FlowResult.fromJson(Map<String, dynamic> json) {
     return (json['isError'] as bool)
         ? FlowResult.error(json['value'])
-        : FlowResult(json['value']);
-  }
-
-  @override
-  Map<String, dynamic> toJson() {
-    return {
-      'value': value,
-      'isError': isError,
-    };
-  }
-}
-
-class FlowResult2 {
-  FlowResult2.ok([this.value]) : isError = false;
-
-  FlowResult2.error(this.value) : isError = true;
-
-  final String? value;
-
-  final bool isError;
-
-  factory FlowResult2.fromJson(Map<String, dynamic> json) {
-    return (json['isError'] as bool)
-        ? FlowResult2.error(json['value'])
-        : FlowResult2.ok(json['value']);
+        : FlowResult.ok(json['value']);
   }
 
   Map<String, dynamic> toJson() {
@@ -792,30 +769,6 @@ class FlowResult2 {
       'value': value,
       'isError': isError,
     };
-  }
-}
-
-@JsonSerializable()
-class FlowResultEnvelop {
-  FlowResultEnvelop({
-    required this.flowId,
-    required this.flowResult,
-    required this.dispatchId,
-  });
-
-  final String flowId;
-  final FlowResult flowResult;
-
-  /// Dispatch id of the event which triggered the flow.
-  /// Will be null when [FlowResult] was produced without dispatching.
-  final int? dispatchId;
-
-  factory FlowResultEnvelop.fromJson(Map<String, dynamic> json) {
-    return _$FlowResultEnvelopFromJson(json);
-  }
-
-  Map<String, dynamic> toJson() {
-    return _$FlowResultEnvelopToJson(this);
   }
 }
 
