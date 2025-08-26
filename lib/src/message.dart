@@ -32,16 +32,12 @@ class FluirErrorEvent extends RemoteEvent {
   final String msg;
 
   factory FluirErrorEvent.fromJson(Map<String, dynamic> json) {
-    return FluirErrorEvent(
-      json['msg'],
-    );
+    return FluirErrorEvent(json['msg']);
   }
 
   @override
   Map<String, dynamic> toJson() {
-    return {
-      'msg': msg,
-    };
+    return {'msg': msg};
   }
 
   @override
@@ -119,11 +115,7 @@ final class ReplyFlow {
     required this.callId,
   });
 
-  ReplyFlow.none()
-      : actorName = '',
-        flowName = '',
-        flowId = '',
-        callId = '';
+  ReplyFlow.none() : actorName = '', flowName = '', flowId = '', callId = '';
 
   final String actorName;
 
@@ -147,10 +139,7 @@ final class ReplyClient {
     required this.callId,
   });
 
-  ReplyClient.none()
-      : serverId = '',
-        sessionId = '',
-        callId = '';
+  ReplyClient.none() : serverId = '', sessionId = '', callId = '';
 
   final String serverId;
 
@@ -200,11 +189,9 @@ class ChangeEnvelop {
   /// in cases when it won't receive changes to project, but can be considered ready.
   ///
   /// They should be provided only by the server to the client and never stored.
-  ChangeEnvelop.empty({
-    required this.key,
-    required this.name,
-  })  : changeId = '',
-        changes = <Change>[];
+  ChangeEnvelop.empty({required this.key, required this.name})
+    : changeId = '',
+      changes = <Change>[];
 
   /// Message id with which this envelop was saved in Pulsar
   final String changeId;
@@ -242,10 +229,7 @@ class ChangeEnvelop {
     final changesJson = json['changes'] as List;
 
     if (changesJson.isEmpty) {
-      return ChangeEnvelop.empty(
-        key: json['aid'],
-        name: name,
-      );
+      return ChangeEnvelop.empty(key: json['aid'], name: name);
     }
 
     for (final changeJson in changesJson) {
@@ -260,9 +244,7 @@ class ChangeEnvelop {
         throw FluirError('unregistered change type $type in $changeJson');
       }
 
-      deserializedChanges.add(
-        fac(changeJson['change']),
-      );
+      deserializedChanges.add(fac(changeJson['change']));
     }
 
     return ChangeEnvelop(
@@ -288,10 +270,7 @@ class ChangeEnvelop {
         typeName = changeType;
       }
 
-      changesJson.add({
-        'type': typeName,
-        'change': change.toJson(),
-      });
+      changesJson.add({'type': typeName, 'change': change.toJson()});
     }
 
     final map = {
@@ -446,10 +425,7 @@ final class FlowCallReplyEnvelop {
 
 @JsonSerializable(anyMap: true, createToJson: false)
 final class FlowCallReplyOk {
-  FlowCallReplyOk({
-    required this.eventType,
-    required this.event,
-  });
+  FlowCallReplyOk({required this.eventType, required this.event});
 
   final String eventType;
 
@@ -460,10 +436,7 @@ final class FlowCallReplyOk {
 
 @JsonSerializable(anyMap: true, createToJson: false)
 final class FlowCallReplyErr {
-  FlowCallReplyErr({
-    required this.errorType,
-    required this.message,
-  });
+  FlowCallReplyErr({required this.errorType, required this.message});
 
   final String errorType;
 
@@ -503,10 +476,7 @@ class FlowResult {
   }
 
   Map<String, dynamic> toJson() {
-    return {
-      'value': value,
-      'isError': isError,
-    };
+    return {'value': value, 'isError': isError};
   }
 }
 
@@ -525,12 +495,7 @@ class ChangeId {
   /// Throws if string is invalid.
   factory ChangeId.fromString(String chIdStr) {
     if (chIdStr.isEmpty) {
-      return ChangeId(
-        ledgerId: 0,
-        entryId: 0,
-        batchIdx: 0,
-        partitionIdx: 0,
-      );
+      return ChangeId(ledgerId: 0, entryId: 0, batchIdx: 0, partitionIdx: 0);
     }
 
     final split = chIdStr.split(":");
@@ -605,15 +570,11 @@ class ChangeId {
 void kRegisterFluirMessage() {
   // error
 
-  kRegisterMessageFactory<FluirErrorEvent>(
-    FluirErrorEvent.fromJson,
-  );
+  kRegisterMessageFactory<FluirErrorEvent>(FluirErrorEvent.fromJson);
 
   // value view
 
-  kRegisterMessageFactory<ValueViewChanged>(
-    ValueViewChanged.fromJson,
-  );
+  kRegisterMessageFactory<ValueViewChanged>(ValueViewChanged.fromJson);
 
   // counter view
 
@@ -623,33 +584,21 @@ void kRegisterFluirMessage() {
   kRegisterMessageFactory<CounterViewDecremented>(
     CounterViewDecremented.fromJson,
   );
-  kRegisterMessageFactory<CounterViewReset>(
-    CounterViewReset.fromJson,
-  );
+  kRegisterMessageFactory<CounterViewReset>(CounterViewReset.fromJson);
 
   // ref view
 
-  kRegisterMessageFactory<RefViewChanged>(
-    RefViewChanged.fromJson,
-  );
+  kRegisterMessageFactory<RefViewChanged>(RefViewChanged.fromJson);
 
   // list view
 
-  kRegisterMessageFactory<ListViewCleared>(
-    ListViewCleared.fromJson,
-  );
-  kRegisterMessageFactory<ListViewItemAdded>(
-    ListViewItemAdded.fromJson,
-  );
+  kRegisterMessageFactory<ListViewCleared>(ListViewCleared.fromJson);
+  kRegisterMessageFactory<ListViewItemAdded>(ListViewItemAdded.fromJson);
   kRegisterMessageFactory<ListViewItemAddedIfAbsent>(
     ListViewItemAddedIfAbsent.fromJson,
   );
-  kRegisterMessageFactory<ListViewItemRemoved>(
-    ListViewItemRemoved.fromJson,
-  );
-  kRegisterMessageFactory<ListViewItemChanged>(
-    ListViewItemChanged.fromJson,
-  );
+  kRegisterMessageFactory<ListViewItemRemoved>(ListViewItemRemoved.fromJson);
+  kRegisterMessageFactory<ListViewItemChanged>(ListViewItemChanged.fromJson);
 
   // value attr
 
@@ -665,9 +614,7 @@ void kRegisterFluirMessage() {
   kRegisterMessageFactory<CounterAttrDecremented>(
     CounterAttrDecremented.fromJson,
   );
-  kRegisterMessageFactory<CounterAttrReset>(
-    CounterAttrReset.fromJson,
-  );
+  kRegisterMessageFactory<CounterAttrReset>(CounterAttrReset.fromJson);
 }
 
 void kRegisterMessageFactory<T extends Message>(FromJsonFun<T> fun) {

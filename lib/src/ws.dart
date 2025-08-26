@@ -16,10 +16,7 @@ class WsMessageBox {
 
   final WsMessage msg;
 
-  WsMessageBox({
-    required this.id,
-    required this.msg,
-  });
+  WsMessageBox({required this.id, required this.msg});
 
   factory WsMessageBox.decodeJson(String str, Logger logger) {
     try {
@@ -59,17 +56,11 @@ class WsMessageBox {
         _ => throw FluirError('unknown type $type'),
       };
 
-      return WsMessageBox(
-        id: id,
-        msg: fac(json['msg']),
-      );
+      return WsMessageBox(id: id, msg: fac(json['msg']));
     } catch (e) {
       logger.severe('decode json error: $e');
 
-      return WsMessageBox(
-        id: -1,
-        msg: ErrorWsMsg(str, e.toString()),
-      );
+      return WsMessageBox(id: -1, msg: ErrorWsMsg(str, e.toString()));
     }
   }
 
@@ -84,11 +75,7 @@ class WsMessageBox {
       final msg = '$id jsonEncode() error: $e';
       logger.severe(msg);
 
-      return jsonEncode({
-        'id': id,
-        'type': 'error',
-        'msg': msg,
-      });
+      return jsonEncode({'id': id, 'type': 'error', 'msg': msg});
     }
   }
 
@@ -126,10 +113,7 @@ class WelcomeWsMsg implements WsMessage {
 
 @JsonSerializable()
 class QueryWsMsg implements WsMessage {
-  QueryWsMsg({
-    required this.actorId,
-    required this.def,
-  });
+  QueryWsMsg({required this.actorId, required this.def});
 
   @override
   String get messageType => 'query';
@@ -159,9 +143,7 @@ class QueryWsMsg implements WsMessage {
 
 @JsonSerializable()
 class QueryResultWsMsg implements WsMessage {
-  QueryResultWsMsg({
-    required this.result,
-  });
+  QueryResultWsMsg({required this.result});
 
   @override
   String get messageType => 'query_result';
@@ -411,11 +393,7 @@ class SendCommandWsMsg implements WsMessage {
       throw FluirError('unregistered command type $type in $json');
     }
 
-    return SendCommandWsMsg(
-      json['actorName'],
-      json['to'],
-      fac(json['cmd']),
-    );
+    return SendCommandWsMsg(json['actorName'], json['to'], fac(json['cmd']));
   }
 
   @override
@@ -468,11 +446,7 @@ class CallCommandWsMsg implements WsMessage {
       throw FluirError('unregistered command type $type in $json');
     }
 
-    return CallCommandWsMsg(
-      json['actorName'],
-      json['to'],
-      fac(json['cmd']),
-    );
+    return CallCommandWsMsg(json['actorName'], json['to'], fac(json['cmd']));
   }
 
   @override
@@ -525,17 +499,12 @@ class DispatchEventWsMsg implements WsMessage {
       throw FluirError('unregistered event type $type in $json');
     }
 
-    return DispatchEventWsMsg(
-      fac(json['event']),
-    );
+    return DispatchEventWsMsg(fac(json['event']));
   }
 
   @override
   Map<String, dynamic> toJson() {
-    return {
-      'type': event.runtimeType.toString(),
-      'event': event.toJson(),
-    };
+    return {'type': event.runtimeType.toString(), 'event': event.toJson()};
   }
 
   @override

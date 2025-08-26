@@ -8,8 +8,8 @@ class ViewSnapshot {
   ViewSnapshot(this.value, this.changeId);
 
   ViewSnapshot.fromJson(Map<String, dynamic> json)
-      : value = _value(json),
-        changeId = _changeId(json);
+    : value = _value(json),
+      changeId = _changeId(json);
 
   final dynamic value;
 
@@ -144,11 +144,7 @@ class CounterQueryResult extends ViewQueryResult {
 
   @override
   Map<String, dynamic> toJson() {
-    return {
-      'type': 'cnt',
-      'val': value,
-      'chid': changeId,
-    };
+    return {'type': 'cnt', 'val': value, 'chid': changeId};
   }
 }
 
@@ -191,12 +187,7 @@ class RefQueryResult extends ViewQueryResult {
 }
 
 class ListQueryResult extends ViewQueryResult {
-  ListQueryResult(
-    super.value,
-    this.attrs,
-    super.changeId,
-    this.items,
-  );
+  ListQueryResult(super.value, this.attrs, super.changeId, this.items);
 
   @override
   Iterable<EntityId> get value => super.value;
@@ -286,22 +277,12 @@ class RefQueryResultBuilder extends ViewQueryResultBuilder {
 
   @override
   ViewQueryResult build() {
-    return RefQueryResult(
-      snap.value,
-      attrs,
-      snap.changeId,
-      subquery?.build(),
-    );
+    return RefQueryResult(snap.value, attrs, snap.changeId, subquery?.build());
   }
 }
 
 class ListQueryResultBuilder extends ViewQueryResultBuilder {
-  ListQueryResultBuilder(
-    super.name,
-    this.attrs,
-    super.snap,
-    this.items,
-  );
+  ListQueryResultBuilder(super.name, this.attrs, super.snap, this.items);
 
   final List<QueryResultBuilder> items;
 
@@ -322,12 +303,7 @@ class ListQueryResultBuilder extends ViewQueryResultBuilder {
 
 extension QueryResultBuilderManual on QueryResultBuilder {
   void val(String name, dynamic value, String changeId) {
-    add(
-      ValueQueryResultBuilder(
-        name,
-        ViewSnapshot(value, changeId),
-      ),
-    );
+    add(ValueQueryResultBuilder(name, ViewSnapshot(value, changeId)));
   }
 
   void ref(
@@ -364,12 +340,14 @@ extension QueryResultBuilderManual on QueryResultBuilder {
 
     var items = <EntityId, QueryResultBuilder>{};
     fun(items);
-    add(ListQueryResultBuilder(
-      name,
-      attrsMap,
-      ViewSnapshot(items.keys, changeId),
-      items.values.toList(),
-    ));
+    add(
+      ListQueryResultBuilder(
+        name,
+        attrsMap,
+        ViewSnapshot(items.keys, changeId),
+        items.values.toList(),
+      ),
+    );
   }
 }
 

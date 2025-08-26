@@ -61,9 +61,7 @@ class ValueQueryDef extends ViewQueryDef {
 
   @override
   Map<String, dynamic> toJson() {
-    return {
-      'type': 'val',
-    };
+    return {'type': 'val'};
   }
 }
 
@@ -78,18 +76,12 @@ class CounterQueryDef extends ViewQueryDef {
 
   @override
   Map<String, dynamic> toJson() {
-    return {
-      'type': 'cnt',
-    };
+    return {'type': 'cnt'};
   }
 }
 
 class RefQueryDef extends ViewQueryDef {
-  RefQueryDef({
-    required this.query,
-    required this.attrs,
-    super.subscribe,
-  });
+  RefQueryDef({required this.query, required this.attrs, super.subscribe});
 
   final QueryDef query;
 
@@ -102,10 +94,7 @@ class RefQueryDef extends ViewQueryDef {
     final query = QueryDef.fromJson(queryJson);
     List<String> attrs = List.from(json['attrs'] ?? []);
 
-    return RefQueryDef(
-      query: query,
-      attrs: attrs,
-    );
+    return RefQueryDef(query: query, attrs: attrs);
   }
 
   @override
@@ -203,11 +192,7 @@ class ValueQueryDefBuilder extends ViewQueryDefBuilder {
 }
 
 class RefQueryDefBuilder extends ViewQueryDefBuilder {
-  RefQueryDefBuilder(
-    super.name,
-    this.attrs, {
-    super.subscribe = false,
-  });
+  RefQueryDefBuilder(super.name, this.attrs, {super.subscribe = false});
 
   final List<String> attrs;
 
@@ -289,8 +274,11 @@ extension QueryDefBuilderManual on QueryDefBuilder {
     add(qb);
   }
 
-  void list(String name, List<String> attrs,
-      void Function(ListQueryDefBuilder qb) fun) {
+  void list(
+    String name,
+    List<String> attrs,
+    void Function(ListQueryDefBuilder qb) fun,
+  ) {
     var qb = ListQueryDefBuilder(name, attrs);
     fun(qb);
     add(qb);
