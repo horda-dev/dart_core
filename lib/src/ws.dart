@@ -11,11 +11,18 @@ import 'query_res.dart';
 
 part 'ws.g.dart';
 
+/// Container for WebSocket messages with unique identification.
+/// 
+/// Wraps WebSocket messages with an ID for request/response correlation
+/// and provides JSON encoding/decoding with error handling.
 class WsMessageBox {
+  /// Unique identifier for this message.
   final int id;
 
+  /// The actual message payload.
   final WsMessage msg;
 
+  /// Creates a WebSocket message box with ID and message.
   WsMessageBox({required this.id, required this.msg});
 
   factory WsMessageBox.decodeJson(String str, Logger logger) {
@@ -85,17 +92,30 @@ class WsMessageBox {
   }
 }
 
+/// Base class for all WebSocket messages in the Horda platform.
+/// 
+/// Defines the common interface for messages sent over WebSocket connections
+/// between clients and the Horda server.
 sealed class WsMessage {
+  /// Type identifier for this message used in JSON serialization.
   String get messageType;
 
+  /// Converts the message to JSON for network transmission.
   Map<String, dynamic> toJson();
 }
 
+/// Welcome message sent by server after WebSocket connection establishment.
+/// 
+/// Provides client identification and server version information.
 @JsonSerializable()
 class WelcomeWsMsg implements WsMessage {
+  /// Creates a welcome message.
   WelcomeWsMsg(this.userId, this.serverVersion);
 
+  /// ID of the authenticated user, or null for anonymous connections.
   final String? userId;
+  
+  /// Version of the Horda server.
   final String serverVersion;
 
   @override
@@ -111,15 +131,22 @@ class WelcomeWsMsg implements WsMessage {
   String toString() => toJson().toString();
 }
 
+/// Message requesting a query on an entity's views.
+/// 
+/// Sent by clients to retrieve current view data from specific entities
+/// with optional real-time subscriptions.
 @JsonSerializable()
 class QueryWsMsg implements WsMessage {
+  /// Creates a query message for the specified entity and query definition.
   QueryWsMsg({required this.actorId, required this.def});
 
   @override
   String get messageType => 'query';
 
+  /// ID of the entity to query.
   final String actorId;
 
+  /// Definition specifying which views to query and how.
   @JsonKey(fromJson: _defFromJson, toJson: _defToJson)
   final QueryDef def;
 
@@ -141,13 +168,18 @@ class QueryWsMsg implements WsMessage {
   String toString() => 'QueryWsMsg(actor: $actorId)';
 }
 
+/// Message containing the results of a query request.
+/// 
+/// Sent by server in response to QueryWsMsg with the requested view data.
 @JsonSerializable()
 class QueryResultWsMsg implements WsMessage {
+  /// Creates a query result message.
   QueryResultWsMsg({required this.result});
 
   @override
   String get messageType => 'query_result';
 
+  /// The query results containing view data.
   @JsonKey(fromJson: _resFromJson, toJson: _resToJson)
   final QueryResult result;
 
@@ -374,13 +406,20 @@ class ViewChangeWsMsg implements WsMessage {
   String toString() => 'ViewChange($env)';
 }
 
+/// Message for sending commands to entities or services.
+/// 
+/// Fire-and-forget command delivery without waiting for response.
 class SendCommandWsMsg implements WsMessage {
+  /// Creates a send command message.
   SendCommandWsMsg(this.actorName, this.to, this.cmd);
 
+  /// Name of the target entity or service type.
   final String actorName;
 
+  /// ID of the specific entity instance to send to.
   final EntityId to;
 
+  /// Command to send for processing.
   final RemoteCommand cmd;
 
   @override
@@ -427,13 +466,20 @@ class SendCommandAckWsMsg implements WsMessage {
   String toString() => 'SendCmdAck()';
 }
 
+/// Message for calling commands and waiting for responses.
+/// 
+/// Request/response pattern for commands that need return values.
 class CallCommandWsMsg implements WsMessage {
+  /// Creates a call command message.
   CallCommandWsMsg(this.actorName, this.to, this.cmd);
 
+  /// Name of the target entity or service type.
   final String actorName;
 
+  /// ID of the specific entity instance to call.
   final EntityId to;
 
+  /// Command to execute and wait for response.
   final RemoteCommand cmd;
 
   @override
@@ -484,9 +530,14 @@ class CallCommandResWsMsg implements WsMessage {
   String toString() => 'CallResCmd(${toJson()})';
 }
 
+/// Message for dispatching events to trigger business processes.
+/// 
+/// Sends events to the server to initiate business process execution.
 class DispatchEventWsMsg implements WsMessage {
+  /// Creates a dispatch event message.
   DispatchEventWsMsg(this.event);
 
+  /// Event to dispatch for business process handling.
   final RemoteEvent event;
 
   @override
