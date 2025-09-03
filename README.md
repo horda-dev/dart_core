@@ -1,7 +1,7 @@
 # Horda Core
 
 [![pub package](https://img.shields.io/pub/v/horda_core.svg)](https://pub.dev/packages/horda_core)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![License: BSD-3-Clause](https://img.shields.io/badge/License-BSD%203--Clause-blue.svg)](https://opensource.org/licenses/BSD-3-Clause)
 
 **Shared foundation for Horda's stateful serverless platform**
 
@@ -163,4 +163,4 @@ Enable real-time UI synchronization in Flutter applications:
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the BSD 3-Clause License - see the [LICENSE](LICENSE) file for details.
