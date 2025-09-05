@@ -1,4 +1,4 @@
-# Horda Core
+# Horda Core for Dart language
 
 [![pub package](https://img.shields.io/pub/v/horda_core.svg)](https://pub.dev/packages/horda_core)
 [![License: BSD-3-Clause](https://img.shields.io/badge/License-BSD%203--Clause-blue.svg)](https://opensource.org/licenses/BSD-3-Clause)
