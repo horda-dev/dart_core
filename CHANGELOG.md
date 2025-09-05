@@ -1,3 +1,7 @@
+## 0.13.2
+
+ - **FIX**: fix ValueViewChanged not being matched when registering factory
+
 ## 0.13.1
 
  - **DOCS**: readme file
