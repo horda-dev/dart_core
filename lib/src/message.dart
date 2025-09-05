@@ -8,24 +8,24 @@ import 'view.dart';
 part 'message.g.dart';
 
 /// Function signature for deserializing JSON objects to typed instances.
-/// 
+///
 /// Used throughout the Horda platform for converting JSON data received
 /// from the network or storage back into strongly-typed Dart objects.
 typedef FromJsonFun<T> = T Function(Map<String, dynamic> json);
 
 /// Global registry of message deserialization factories.
-/// 
+///
 /// Maps message type names to their corresponding fromJson functions,
 /// enabling dynamic deserialization of messages based on type information.
 final kMsgFromJsonFac = <String, FromJsonFun<dynamic>>{};
 
 /// Base class for all messages in the Horda platform.
-/// 
+///
 /// Provides common formatting and string representation functionality
 /// for commands, events, and other message types.
 abstract class Message {
   /// Returns a formatted string representation of the message content.
-  /// 
+  ///
   /// Subclasses can override this to provide meaningful string representations
   /// of their data for debugging and logging purposes.
   String format() => '';
@@ -35,7 +35,7 @@ abstract class Message {
 }
 
 /// Base class for messages that can be serialized and transmitted over the network.
-/// 
+///
 /// Extends Message with JSON serialization capability, enabling messages
 /// to be sent between entities, services, and business processes.
 abstract class RemoteMessage extends Message {
@@ -44,21 +44,21 @@ abstract class RemoteMessage extends Message {
 }
 
 /// Base class for command messages in the entity-command-event architecture.
-/// 
+///
 /// Commands represent requests for work using VerbNoun naming (e.g., CreateUser,
 /// ProcessPayment). They contain all necessary data for task completion and
 /// are processed by entities or services to produce events.
 abstract class RemoteCommand extends RemoteMessage {}
 
 /// Base class for event messages in the entity-command-event architecture.
-/// 
+///
 /// Events represent completed work using NounVerb naming (e.g., UserCreated,
 /// PaymentProcessed). They are produced by entities and services after
 /// successful command processing and contain complete outcome information.
 abstract class RemoteEvent extends RemoteMessage {}
 
 /// Error event representing a failure in the Horda platform.
-/// 
+///
 /// Produced when command processing fails or system errors occur,
 /// providing error information to business processes and clients.
 class FluirErrorEvent extends RemoteEvent {
@@ -82,13 +82,13 @@ class FluirErrorEvent extends RemoteEvent {
 }
 
 /// Unique identifier for command messages.
-/// 
+///
 /// Used to track commands through the system and correlate them
 /// with their resulting events for request/response patterns.
 typedef CommandId = int;
 
 /// Envelope containing a command and its routing metadata.
-/// 
+///
 /// Wraps commands with information needed to route them through the
 /// distributed system, including sender/receiver identities and reply channels.
 class CommandEnvelop {
@@ -160,7 +160,7 @@ class CommandEnvelop {
 }
 
 /// Information for routing command replies back to business processes.
-/// 
+///
 /// Contains identifiers needed to deliver events from command processing
 /// back to the business process that initiated the command.
 @JsonSerializable(anyMap: true)
@@ -195,7 +195,7 @@ final class ReplyFlow {
 }
 
 /// Information for routing command replies back to clients.
-/// 
+///
 /// Contains identifiers needed to deliver events from command processing
 /// back to the client application that originated the request.
 @JsonSerializable(anyMap: true)
@@ -227,7 +227,7 @@ final class ReplyClient {
 }
 
 /// Envelope containing view changes and their routing metadata.
-/// 
+///
 /// Wraps view changes with information about which entity view is being
 /// modified, enabling real-time updates to client applications.
 class ChangeEnvelop {
@@ -248,7 +248,7 @@ class ChangeEnvelop {
   }
 
   /// Creates a draft change envelope without a message ID.
-  /// 
+  ///
   /// Used for building changes before they are committed to the message system.
   ChangeEnvelop.draft({
     required this.key,
@@ -265,7 +265,7 @@ class ChangeEnvelop {
   }
 
   /// Creates an empty change envelope to signal view readiness.
-  /// 
+  ///
   /// Used when a view has no changes to project but should be marked as ready
   /// for client synchronization. Only used by the server and never persisted.
   ChangeEnvelop.empty({required this.key, required this.name})
@@ -367,7 +367,7 @@ class ChangeEnvelop {
 }
 
 /// Envelope containing an event and its metadata.
-/// 
+///
 /// Wraps events produced by entities and services with tracking information
 /// that correlates them with the commands that triggered them.
 class EventEnvelop {
@@ -426,7 +426,7 @@ class EventEnvelop {
 }
 
 /// Envelope for triggering business process execution.
-/// 
+///
 /// Contains an event that should trigger a business process along with
 /// session and user context needed for process execution.
 class FlowRunEnvelop {
@@ -497,7 +497,7 @@ class FlowRunEnvelop {
 }
 
 /// Envelope containing a reply from a business process call.
-/// 
+///
 /// Wraps the result of calling an entity or service from within a business
 /// process, indicating success or failure with the resulting event or error.
 @JsonSerializable(anyMap: true, createToJson: false)
@@ -535,7 +535,7 @@ final class FlowCallReplyEnvelop {
 }
 
 /// Successful reply from a business process call.
-/// 
+///
 /// Contains the event produced by successful command processing,
 /// allowing the business process to continue with the next steps.
 @JsonSerializable(anyMap: true, createToJson: false)
@@ -553,7 +553,7 @@ final class FlowCallReplyOk {
 }
 
 /// Error reply from a business process call.
-/// 
+///
 /// Contains error information when command processing fails,
 /// allowing the business process to handle the failure appropriately.
 @JsonSerializable(anyMap: true, createToJson: false)
@@ -572,7 +572,7 @@ final class FlowCallReplyErr {
 }
 
 /// Record of a view change with its state version.
-/// 
+///
 /// Links a specific change to the version of the view state when it was applied,
 /// enabling optimistic concurrency control and change ordering.
 class ChangeRecord {
@@ -583,7 +583,7 @@ class ChangeRecord {
   final Change change;
 
   /// Monotonically increasing version number for the view state.
-  /// 
+  ///
   /// Incremented each time the view state changes. Used for optimistic
   /// concurrency control and ensuring changes are applied in order.
   /// Initial version is 0.
@@ -594,7 +594,7 @@ class ChangeRecord {
 }
 
 /// Result of business process execution.
-/// 
+///
 /// Indicates whether a business process completed successfully or failed,
 /// with an optional value providing additional information about the outcome.
 class FlowResult {
@@ -622,7 +622,7 @@ class FlowResult {
 }
 
 /// Unique identifier for changes in the distributed message system.
-/// 
+///
 /// Provides a hierarchical identification scheme that enables ordering
 /// and comparison of changes across the distributed Horda platform.
 class ChangeId {
@@ -662,13 +662,13 @@ class ChangeId {
 
   /// Identifier of the message ledger containing this change.
   final int ledgerId;
-  
+
   /// Position of the entry within the ledger.
   final int entryId;
-  
+
   /// Index within a batch of changes (if batched).
   final int batchIdx;
-  
+
   /// Partition index for distributed storage.
   final int partitionIdx;
 

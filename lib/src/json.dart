@@ -1,7 +1,7 @@
 import 'package:json_annotation/json_annotation.dart';
 
 /// JSON converter for Duration objects in the Horda platform.
-/// 
+///
 /// Converts Duration objects to/from integer values representing seconds
 /// for efficient network transmission and storage.
 class DurationJsonConverter implements JsonConverter<Duration, int> {
@@ -18,7 +18,7 @@ class DurationJsonConverter implements JsonConverter<Duration, int> {
 }
 
 /// JSON converter for DateTime objects in the Horda platform.
-/// 
+///
 /// Converts DateTime objects to/from integer values representing
 /// milliseconds since epoch for consistent time handling across the system.
 class DateTimeJsonConverter implements JsonConverter<DateTime, int> {

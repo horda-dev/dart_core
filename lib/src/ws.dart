@@ -12,7 +12,7 @@ import 'query_res.dart';
 part 'ws.g.dart';
 
 /// Container for WebSocket messages with unique identification.
-/// 
+///
 /// Wraps WebSocket messages with an ID for request/response correlation
 /// and provides JSON encoding/decoding with error handling.
 class WsMessageBox {
@@ -93,7 +93,7 @@ class WsMessageBox {
 }
 
 /// Base class for all WebSocket messages in the Horda platform.
-/// 
+///
 /// Defines the common interface for messages sent over WebSocket connections
 /// between clients and the Horda server.
 sealed class WsMessage {
@@ -105,7 +105,7 @@ sealed class WsMessage {
 }
 
 /// Welcome message sent by server after WebSocket connection establishment.
-/// 
+///
 /// Provides client identification and server version information.
 @JsonSerializable()
 class WelcomeWsMsg implements WsMessage {
@@ -114,7 +114,7 @@ class WelcomeWsMsg implements WsMessage {
 
   /// ID of the authenticated user, or null for anonymous connections.
   final String? userId;
-  
+
   /// Version of the Horda server.
   final String serverVersion;
 
@@ -132,7 +132,7 @@ class WelcomeWsMsg implements WsMessage {
 }
 
 /// Message requesting a query on an entity's views.
-/// 
+///
 /// Sent by clients to retrieve current view data from specific entities
 /// with optional real-time subscriptions.
 @JsonSerializable()
@@ -169,7 +169,7 @@ class QueryWsMsg implements WsMessage {
 }
 
 /// Message containing the results of a query request.
-/// 
+///
 /// Sent by server in response to QueryWsMsg with the requested view data.
 @JsonSerializable()
 class QueryResultWsMsg implements WsMessage {
@@ -407,7 +407,7 @@ class ViewChangeWsMsg implements WsMessage {
 }
 
 /// Message for sending commands to entities or services.
-/// 
+///
 /// Fire-and-forget command delivery without waiting for response.
 class SendCommandWsMsg implements WsMessage {
   /// Creates a send command message.
@@ -467,7 +467,7 @@ class SendCommandAckWsMsg implements WsMessage {
 }
 
 /// Message for calling commands and waiting for responses.
-/// 
+///
 /// Request/response pattern for commands that need return values.
 class CallCommandWsMsg implements WsMessage {
   /// Creates a call command message.
@@ -531,7 +531,7 @@ class CallCommandResWsMsg implements WsMessage {
 }
 
 /// Message for dispatching events to trigger business processes.
-/// 
+///
 /// Sends events to the server to initiate business process execution.
 class DispatchEventWsMsg implements WsMessage {
   /// Creates a dispatch event message.

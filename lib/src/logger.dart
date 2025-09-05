@@ -44,7 +44,7 @@ enum LogLevel {
 }
 
 /// Abstract logging interface for the Horda platform.
-/// 
+///
 /// Provides structured logging capabilities with different severity levels
 /// for debugging, monitoring, and troubleshooting system operations.
 abstract class Logger {
@@ -53,26 +53,26 @@ abstract class Logger {
 
   /// Logs a fatal error message before process termination.
   void error(String subject, String msg);
-  
+
   /// Logs an unexpected but non-fatal condition.
   void warn(String subject, String msg);
-  
+
   /// Logs completion of a principal operation.
   void info(String subject, String msg);
-  
+
   /// Logs completion of a secondary operation or detailed information.
   void debug(String subject, String msg);
-  
+
   /// Logs entry into a method or start of an operation.
   void trace(String subject, String msg);
 }
 
 /// Extension providing a generic log method for all log levels.
-/// 
+///
 /// Enables logging at any level through a single method interface.
 extension LogExtension on Logger {
   /// Logs a message at the specified level.
-  /// 
+  ///
   /// [level] - The severity level for this log message
   /// [subject] - Component or operation being logged
   /// [msg] - The log message content
@@ -98,7 +98,7 @@ extension LogExtension on Logger {
 }
 
 /// Simple console-based logger implementation.
-/// 
+///
 /// Outputs log messages to stdout with level filtering and basic formatting.
 /// Used for development and testing of Horda applications.
 class SimpleLogger implements Logger {

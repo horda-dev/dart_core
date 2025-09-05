@@ -2,19 +2,19 @@ import 'id.dart';
 import 'message.dart';
 
 /// Base class for all view changes in the Horda platform.
-/// 
+///
 /// Changes represent modifications to entity views that are applied
 /// to maintain real-time synchronization between entities and client applications.
 abstract class Change extends RemoteMessage {
   /// Whether changes of this type overwrite or accumulate.
-  /// 
+  ///
   /// - `true` - Changes overwrite the previous version (e.g., value updates)
   /// - `false` - Changes add to the previous version (e.g., counter increments)
   bool get isOverwriting;
 }
 
 /// Base class for changes to value views.
-/// 
+///
 /// Value view changes always overwrite the previous value since
 /// they represent setting a new typed value for the view.
 abstract class ValueViewChange extends Change {
@@ -23,7 +23,7 @@ abstract class ValueViewChange extends Change {
 }
 
 /// Change representing a new value being set in a typed value view.
-/// 
+///
 /// The type parameter [T] represents the declared type of the value view,
 /// not necessarily the runtime type of [newValue].
 class ValueViewChanged<T> extends ValueViewChange {
@@ -73,7 +73,7 @@ Map<String, dynamic> _valueToJson<T>(T value) {
 }
 
 /// Base class for changes to counter views.
-/// 
+///
 /// Counter view changes accumulate rather than overwrite, allowing
 /// multiple increments, decrements, and resets to be applied in sequence.
 abstract class CounterViewChange extends Change {
@@ -82,7 +82,7 @@ abstract class CounterViewChange extends Change {
 }
 
 /// Change representing an increment operation on a counter view.
-/// 
+///
 /// Adds the specified amount to the current counter value.
 class CounterViewIncremented extends CounterViewChange {
   /// Creates a counter increment change.
@@ -102,7 +102,7 @@ class CounterViewIncremented extends CounterViewChange {
 }
 
 /// Change representing a decrement operation on a counter view.
-/// 
+///
 /// Subtracts the specified amount from the current counter value.
 class CounterViewDecremented extends CounterViewChange {
   /// Creates a counter decrement change.
@@ -122,7 +122,7 @@ class CounterViewDecremented extends CounterViewChange {
 }
 
 /// Change representing a reset operation on a counter view.
-/// 
+///
 /// Sets the counter to a specific value, discarding the previous count.
 class CounterViewReset extends CounterViewChange {
   /// Creates a counter reset change.
@@ -142,7 +142,7 @@ class CounterViewReset extends CounterViewChange {
 }
 
 /// Base class for changes to reference views.
-/// 
+///
 /// Reference view changes always overwrite the previous reference
 /// since they represent changing which entity is being referenced.
 abstract class RefViewChange extends Change {
@@ -151,7 +151,7 @@ abstract class RefViewChange extends Change {
 }
 
 /// Change representing a new entity reference being set in a reference view.
-/// 
+///
 /// Updates the view to reference a different entity or clears the reference.
 class RefViewChanged extends RefViewChange {
   /// Creates a reference change with the new entity ID.
@@ -174,7 +174,7 @@ class RefViewChanged extends RefViewChange {
 }
 
 /// Base class for changes to list views.
-/// 
+///
 /// List view changes accumulate to build up the list contents,
 /// allowing multiple items to be added, removed, or modified.
 abstract class ListViewChange extends Change {
@@ -183,7 +183,7 @@ abstract class ListViewChange extends Change {
 }
 
 /// Change representing an item being added to a list view.
-/// 
+///
 /// Appends a new entity reference to the end of the list.
 class ListViewItemAdded extends ListViewChange {
   /// Creates a list item addition change.
@@ -206,7 +206,7 @@ class ListViewItemAdded extends ListViewChange {
 }
 
 /// Change representing an item being added to a list view only if not already present.
-/// 
+///
 /// Adds the entity reference to the list only if it's not already contained,
 /// preventing duplicate entries.
 class ListViewItemAddedIfAbsent extends ListViewChange {
@@ -230,7 +230,7 @@ class ListViewItemAddedIfAbsent extends ListViewChange {
 }
 
 /// Change representing an item being removed from a list view.
-/// 
+///
 /// Removes the first occurrence of the specified entity reference from the list.
 class ListViewItemRemoved extends ListViewChange {
   /// Creates a list item removal change.
@@ -250,7 +250,7 @@ class ListViewItemRemoved extends ListViewChange {
 }
 
 /// Change representing an item in a list view being replaced with another.
-/// 
+///
 /// Replaces the first occurrence of one entity reference with another.
 class ListViewItemChanged extends ListViewChange {
   /// Creates a list item replacement change.
@@ -276,7 +276,7 @@ class ListViewItemChanged extends ListViewChange {
 }
 
 /// Change representing an item in a list view being moved to a new position.
-/// 
+///
 /// Moves the specified entity reference to a different index in the list.
 class ListViewItemMoved extends ListViewChange {
   /// Creates a list item move change.
@@ -299,7 +299,7 @@ class ListViewItemMoved extends ListViewChange {
 }
 
 /// Change representing all items being removed from a list view.
-/// 
+///
 /// Clears the entire list, removing all entity references.
 class ListViewCleared extends ListViewChange {
   /// Creates a list clear change.
@@ -316,25 +316,25 @@ class ListViewCleared extends ListViewChange {
 }
 
 /// Type alias for identifying attributes attached to referenced entities.
-/// 
+///
 /// Combines an entity ID with an attribute name to uniquely identify
 /// a specific attribute on a specific entity within view structures.
 typedef RefIdNamePair = ({String itemId, String name});
 
 /// Base class for changes to attributes attached to referenced entities.
-/// 
+///
 /// Attributes provide additional data associated with entity references
 /// in views, such as counters or values specific to the relationship.
 abstract class AttributeChange extends Change {
   /// ID of the entity that owns this attribute.
   EntityId get attrId;
-  
+
   /// Name of the attribute being changed.
   String get attrName;
 }
 
 /// Change representing a value attribute on a referenced entity being updated.
-/// 
+///
 /// Updates a named attribute associated with an entity reference,
 /// storing arbitrary typed data related to the relationship.
 class RefValueAttributeChanged extends AttributeChange {
@@ -372,7 +372,7 @@ class RefValueAttributeChanged extends AttributeChange {
 }
 
 /// Change representing a counter attribute on a referenced entity being incremented.
-/// 
+///
 /// Increases a numeric attribute associated with an entity reference,
 /// useful for tracking quantities or counts related to the relationship.
 class CounterAttrIncremented extends AttributeChange {
@@ -410,7 +410,7 @@ class CounterAttrIncremented extends AttributeChange {
 }
 
 /// Change representing a counter attribute on a referenced entity being decremented.
-/// 
+///
 /// Decreases a numeric attribute associated with an entity reference,
 /// useful for tracking reductions in quantities or counts.
 class CounterAttrDecremented extends AttributeChange {
@@ -448,7 +448,7 @@ class CounterAttrDecremented extends AttributeChange {
 }
 
 /// Change representing a counter attribute on a referenced entity being reset.
-/// 
+///
 /// Sets a numeric attribute to a specific value, discarding the previous count.
 class CounterAttrReset extends AttributeChange {
   /// Creates a counter attribute reset change.

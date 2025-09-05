@@ -1,5 +1,5 @@
 /// Error class for exceptions within the Horda platform.
-/// 
+///
 /// Used to represent system errors, validation failures, and other
 /// exceptional conditions that occur during entity command processing,
 /// business process execution, or message handling.

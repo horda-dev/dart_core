@@ -5,7 +5,7 @@ import 'id.dart';
 import 'view.dart';
 
 /// Snapshot of a view's current value with version information.
-/// 
+///
 /// Represents the current state of an entity view at a specific point in time,
 /// including the change ID for tracking updates and synchronization.
 class ViewSnapshot {
@@ -63,7 +63,7 @@ class ViewSnapshot {
 // query result
 
 /// Result of executing a query against entity views.
-/// 
+///
 /// Contains the retrieved view data organized by view name,
 /// with each view providing its specific result type.
 class QueryResult {
@@ -110,7 +110,7 @@ class QueryResult {
 }
 
 /// Base class for view-specific query results.
-/// 
+///
 /// Provides common functionality for different types of view results
 /// while allowing type-specific implementations.
 abstract class ViewQueryResult {
@@ -128,7 +128,7 @@ abstract class ViewQueryResult {
 }
 
 /// Query result for value views.
-/// 
+///
 /// Contains a single typed value retrieved from an entity view.
 class ValueQueryResult extends ViewQueryResult {
   /// Creates a value query result.
@@ -157,7 +157,7 @@ class ValueQueryResult extends ViewQueryResult {
 }
 
 /// Query result for counter views.
-/// 
+///
 /// Contains an integer counter value retrieved from an entity view.
 class CounterQueryResult extends ViewQueryResult {
   /// Creates a counter query result.
@@ -179,7 +179,7 @@ class CounterQueryResult extends ViewQueryResult {
 }
 
 /// Query result for reference views.
-/// 
+///
 /// Contains an entity reference with optional nested query results
 /// and attributes associated with the reference.
 class RefQueryResult extends ViewQueryResult {
@@ -225,7 +225,7 @@ class RefQueryResult extends ViewQueryResult {
 }
 
 /// Query result for list views.
-/// 
+///
 /// Contains a list of entity references with per-item query results
 /// and attributes for complex list data structures.
 class ListQueryResult extends ViewQueryResult {
@@ -276,7 +276,7 @@ class ListQueryResult extends ViewQueryResult {
 // query result builder
 
 /// Builder for constructing QueryResult objects programmatically.
-/// 
+///
 /// Enables building complex query results with multiple view results
 /// for testing, mocking, or programmatic result construction.
 class QueryResultBuilder {
@@ -300,7 +300,7 @@ class QueryResultBuilder {
 }
 
 /// Base class for building view-specific query results.
-/// 
+///
 /// Provides common functionality for constructing different types
 /// of view query results from snapshots.
 abstract class ViewQueryResultBuilder {
@@ -318,7 +318,7 @@ abstract class ViewQueryResultBuilder {
 }
 
 /// Builder for value query results.
-/// 
+///
 /// Constructs value query results from view snapshots.
 class ValueQueryResultBuilder extends ViewQueryResultBuilder {
   /// Creates a value query result builder.
@@ -331,7 +331,7 @@ class ValueQueryResultBuilder extends ViewQueryResultBuilder {
 }
 
 /// Builder for reference query results.
-/// 
+///
 /// Constructs reference query results with attributes and nested queries.
 class RefQueryResultBuilder extends ViewQueryResultBuilder {
   /// Creates a reference query result builder.
@@ -350,7 +350,7 @@ class RefQueryResultBuilder extends ViewQueryResultBuilder {
 }
 
 /// Builder for list query results.
-/// 
+///
 /// Constructs list query results with per-item attributes and nested queries.
 class ListQueryResultBuilder extends ViewQueryResultBuilder {
   /// Creates a list query result builder.

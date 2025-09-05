@@ -1,7 +1,7 @@
 import 'error.dart';
 
 /// Definition of a query to retrieve entity view data.
-/// 
+///
 /// Specifies which views to query from entities, enabling clients to
 /// request specific data projections with optional real-time subscriptions.
 class QueryDef {
@@ -49,7 +49,7 @@ class QueryDef {
 }
 
 /// Base class for defining queries on specific view types.
-/// 
+///
 /// Provides common subscription functionality and serves as the base
 /// for type-specific view query definitions.
 abstract class ViewQueryDef {
@@ -64,7 +64,7 @@ abstract class ViewQueryDef {
 }
 
 /// Query definition for value views.
-/// 
+///
 /// Queries single typed values from entity views, such as strings,
 /// numbers, booleans, or DateTime objects.
 class ValueQueryDef extends ViewQueryDef {
@@ -84,7 +84,7 @@ class ValueQueryDef extends ViewQueryDef {
 }
 
 /// Query definition for counter views.
-/// 
+///
 /// Queries integer counters from entity views that track quantities,
 /// counts, or other numeric metrics.
 class CounterQueryDef extends ViewQueryDef {
@@ -104,7 +104,7 @@ class CounterQueryDef extends ViewQueryDef {
 }
 
 /// Query definition for reference views.
-/// 
+///
 /// Queries entity references with optional nested queries and attributes,
 /// enabling traversal of entity relationships.
 class RefQueryDef extends ViewQueryDef {
@@ -138,7 +138,7 @@ class RefQueryDef extends ViewQueryDef {
 }
 
 /// Query definition for list views.
-/// 
+///
 /// Queries lists of entity references with pagination, nested queries,
 /// and per-item attributes for efficient handling of large collections.
 class ListQueryDef extends ViewQueryDef {
@@ -194,7 +194,7 @@ class ListQueryDef extends ViewQueryDef {
 // query definition builder
 
 /// Builder for constructing QueryDef objects programmatically.
-/// 
+///
 /// Provides a fluent interface for building complex queries with
 /// multiple view definitions and nested relationships.
 class QueryDefBuilder {
@@ -218,7 +218,7 @@ class QueryDefBuilder {
 }
 
 /// Base class for building view-specific query definitions.
-/// 
+///
 /// Provides common functionality for building queries on different
 /// types of entity views.
 abstract class ViewQueryDefBuilder {
@@ -236,7 +236,7 @@ abstract class ViewQueryDefBuilder {
 }
 
 /// Builder for value view query definitions.
-/// 
+///
 /// Constructs queries for single typed values in entity views.
 class ValueQueryDefBuilder extends ViewQueryDefBuilder {
   /// Creates a value query builder.
@@ -249,7 +249,7 @@ class ValueQueryDefBuilder extends ViewQueryDefBuilder {
 }
 
 /// Builder for reference view query definitions.
-/// 
+///
 /// Constructs queries for entity references with nested queries and attributes.
 class RefQueryDefBuilder extends ViewQueryDefBuilder {
   /// Creates a reference query builder with attribute list.
@@ -281,7 +281,7 @@ class RefQueryDefBuilder extends ViewQueryDefBuilder {
 }
 
 /// Builder for list view query definitions.
-/// 
+///
 /// Constructs queries for lists of entity references with pagination support.
 class ListQueryDefBuilder extends ViewQueryDefBuilder {
   /// Creates a list query builder with attributes and pagination.
@@ -329,7 +329,7 @@ class ListQueryDefBuilder extends ViewQueryDefBuilder {
 // query definition builder extensions
 
 /// Extension providing convenient methods for building query definitions.
-/// 
+///
 /// Offers shorthand methods for adding common view types to query builders.
 extension QueryDefBuilderManual on QueryDefBuilder {
   /// Adds a value view query to the builder.
@@ -361,7 +361,7 @@ extension QueryDefBuilderManual on QueryDefBuilder {
 }
 
 /// Extension providing convenient methods for reference query builders.
-/// 
+///
 /// Enables adding nested view queries to reference view definitions.
 extension RefQueryDefBuilderManual on RefQueryDefBuilder {
   /// Adds a value view query to the nested query definition.
@@ -371,7 +371,7 @@ extension RefQueryDefBuilderManual on RefQueryDefBuilder {
 }
 
 /// Extension providing convenient methods for list query builders.
-/// 
+///
 /// Enables adding nested view queries to list view definitions.
 extension ListQueryDefBuilderManual on ListQueryDefBuilder {
   /// Adds a value view query to the per-item query definition.
