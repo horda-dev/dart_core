@@ -5,16 +5,9 @@
 
 **Shared foundation for Horda's stateful serverless platform**
 
-Horda Core provides the fundamental types, protocols, and utilities that power the entity-command-event architecture used by both Horda server and client applications.
+Horda Core provides the fundamental types, protocols, and utilities that power the message drive architecture used by both Horda server and client applications.
 
 ## Overview
-
-Horda Core is the shared library that enables seamless communication between Horda clients and servers. It provides the core abstractions and protocols for:
-
-- **Entity-Command-Event Architecture**: Type-safe message passing between distributed components
-- **Real-time Query System**: Efficient data querying with live synchronization
-- **WebSocket Protocol**: Low-latency bidirectional communication
-- **Stateful Entity Management**: Consistent entity identification and lifecycle management
 
 ### Key Features
 
@@ -26,7 +19,7 @@ Horda Core is the shared library that enables seamless communication between Hor
 
 ## Core Architecture
 
-### Entity-Command-Event System
+### Message Driven System
 
 Horda Core implements a distributed architecture where components communicate through structured messages:
 
@@ -41,7 +34,6 @@ Every entity in the Horda platform has a unique identifier:
 
 - **EntityId**: Combines entity type and instance identifier
 - **Entity Types**: Structured categorization of business domain objects
-- **ID Management**: Consistent creation, serialization, and validation across the platform
 
 ## Query System
 
@@ -52,7 +44,7 @@ Build complex data queries using the fluent query definition API:
 - **View Types**: 
   - `Value` - Single typed values (strings, numbers, dates)
   - `Counter` - Integer counters and metrics
-  - `Reference` - Links to other entities with attributes
+  - `Ref` - Links to other entities with attributes
   - `RefList` - Collections of entity references with pagination
 
 - **Query Building**: Programmatic construction with type safety
@@ -145,7 +137,7 @@ Essential utilities and abstractions:
 
 ## Integration
 
-### With dart_server
+### With horda_server
 
 Horda Core provides the foundation for server-side entity implementation:
 
