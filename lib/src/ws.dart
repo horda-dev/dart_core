@@ -423,7 +423,11 @@ class ViewChangeWsMsg implements WsMessage {
 /// Fire-and-forget command delivery without waiting for response.
 class SendCommandWsMsg implements WsMessage {
   /// Creates a send command message.
-  SendCommandWsMsg(this.actorName, this.to, this.cmd);
+  SendCommandWsMsg(this.actorName, this.to, RemoteCommand cmd)
+    : type = cmd.runtimeType.toString(),
+      cmd = cmd.toJson();
+
+  SendCommandWsMsg._json(this.actorName, this.to, this.type, this.cmd);
 
   /// Name of the target entity or service type.
   final String actorName;
@@ -431,20 +435,22 @@ class SendCommandWsMsg implements WsMessage {
   /// ID of the specific entity instance to send to.
   final EntityId to;
 
-  /// Command to send for processing.
-  final RemoteCommand cmd;
+  /// Type of the command which is being sent.
+  final String type;
+
+  /// JSON of the command which is being sent.
+  final Map<String, dynamic> cmd;
 
   @override
-  String get messageType => 'send';
+  final messageType = 'send';
 
   factory SendCommandWsMsg.fromJson(Map<String, dynamic> json) {
-    var type = json['type'] as String;
-    var fac = kMsgFromJsonFac[type];
-    if (fac == null) {
-      throw FluirError('unregistered command type $type in $json');
-    }
-
-    return SendCommandWsMsg(json['actorName'], json['to'], fac(json['cmd']));
+    return SendCommandWsMsg._json(
+      json['actorName'],
+      json['to'],
+      json['type'],
+      json['cmd'],
+    );
   }
 
   @override
@@ -452,13 +458,13 @@ class SendCommandWsMsg implements WsMessage {
     return {
       'actorName': actorName,
       'to': to,
-      'type': cmd.runtimeType.toString(),
-      'cmd': cmd.toJson(),
+      'type': type,
+      'cmd': cmd,
     };
   }
 
   @override
-  String toString() => 'SendCmd(${toJson()})';
+  String toString() => 'SendCmd($type | $cmd)';
 }
 
 @JsonSerializable()
@@ -483,7 +489,11 @@ class SendCommandAckWsMsg implements WsMessage {
 /// Request/response pattern for commands that need return values.
 class CallCommandWsMsg implements WsMessage {
   /// Creates a call command message.
-  CallCommandWsMsg(this.actorName, this.to, this.cmd);
+  CallCommandWsMsg(this.actorName, this.to, RemoteCommand cmd)
+    : type = cmd.runtimeType.toString(),
+      cmd = cmd.toJson();
+
+  CallCommandWsMsg._json(this.actorName, this.to, this.type, this.cmd);
 
   /// Name of the target entity or service type.
   final String actorName;
@@ -491,20 +501,22 @@ class CallCommandWsMsg implements WsMessage {
   /// ID of the specific entity instance to call.
   final EntityId to;
 
-  /// Command to execute and wait for response.
-  final RemoteCommand cmd;
+  /// Type of the command which is being called.
+  final String type;
+
+  /// JSON of the command which is being called.
+  final Map<String, dynamic> cmd;
 
   @override
-  String get messageType => 'call';
+  final messageType = 'call';
 
   factory CallCommandWsMsg.fromJson(Map<String, dynamic> json) {
-    var type = json['type'] as String;
-    var fac = kMsgFromJsonFac[type];
-    if (fac == null) {
-      throw FluirError('unregistered command type $type in $json');
-    }
-
-    return CallCommandWsMsg(json['actorName'], json['to'], fac(json['cmd']));
+    return CallCommandWsMsg._json(
+      json['actorName'],
+      json['to'],
+      json['type'],
+      json['cmd'],
+    );
   }
 
   @override
@@ -512,13 +524,13 @@ class CallCommandWsMsg implements WsMessage {
     return {
       'actorName': actorName,
       'to': to,
-      'type': cmd.runtimeType.toString(),
-      'cmd': cmd.toJson(),
+      'type': type,
+      'cmd': cmd,
     };
   }
 
   @override
-  String toString() => 'CallCmd(${toJson()})';
+  String toString() => 'CallCmd($type | $cmd)';
 }
 
 @JsonSerializable()
@@ -547,32 +559,32 @@ class CallCommandResWsMsg implements WsMessage {
 /// Sends events to the server to initiate business process execution.
 class DispatchEventWsMsg implements WsMessage {
   /// Creates a dispatch event message.
-  DispatchEventWsMsg(this.event);
+  DispatchEventWsMsg(RemoteEvent event)
+    : type = event.runtimeType.toString(),
+      event = event.toJson();
 
-  /// Event to dispatch for business process handling.
-  final RemoteEvent event;
+  DispatchEventWsMsg._json(this.type, this.event);
+
+  /// Type of the event which is being dispatched.
+  final String type;
+
+  /// JSON of the event which is being dispatched.
+  final Map<String, dynamic> event;
 
   @override
   final messageType = 'dispatch';
 
   factory DispatchEventWsMsg.fromJson(Map<String, dynamic> json) {
-    final type = json['type'] as String;
-    final fac = kMsgFromJsonFac[type];
-    if (fac == null) {
-      throw FluirError('unregistered event type $type in $json');
-    }
-
-    return DispatchEventWsMsg(fac(json['event']));
+    return DispatchEventWsMsg._json(json['type'], json['event']);
   }
 
   @override
   Map<String, dynamic> toJson() {
-    return {'type': event.runtimeType.toString(), 'event': event.toJson()};
+    return {'type': type, 'event': event};
   }
 
   @override
-  String toString() =>
-      'DispatchEvent(${event.runtimeType} | ${event.toJson()})';
+  String toString() => 'DispatchEvent($type | $event)';
 }
 
 @JsonSerializable()
