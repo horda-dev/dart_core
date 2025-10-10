@@ -1,3 +1,7 @@
+## 0.15.0
+
+ - **FEAT**: update send, call and dispatch ws messages to use JSON representation of commands/events.
+
 ## 0.14.0
 
  - **FEAT**: add entityName to QueryDef and QueryDefBuilder.
