@@ -1,3 +1,7 @@
+## 0.16.0
+
+ - **FEAT**: add kSingletonId constant for singleton entity support.
+
 ## 0.15.0
 
  - **FEAT**: update send, call and dispatch ws messages to use JSON representation of commands/events.

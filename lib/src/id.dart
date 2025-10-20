@@ -4,6 +4,13 @@
 /// Each entity instance has a unique ID that persists throughout its lifecycle.
 typedef EntityId = String;
 
+/// The constant ID used for all singleton entities.
+///
+/// Singleton entities are pre-initialized at registration and always use this ID.
+/// Multiple singleton entity types can coexist, each addressed by this same ID
+/// but routed to different entity types by the system.
+const kSingletonId = 'singleton';
+
 /// Identifier composed of two entity IDs for representing relationships.
 ///
 /// Used when you need to create a unique identifier from two entity IDs,
