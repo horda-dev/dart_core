@@ -611,12 +611,12 @@ class ChangeRecord {
 ///
 /// Indicates whether a business process completed successfully or failed,
 /// with an optional value providing additional information about the outcome.
-class FlowResult {
+class ProcessResult {
   /// Creates a successful flow result with optional value.
-  FlowResult.ok([this.value]) : isError = false;
+  ProcessResult.ok([this.value]) : isError = false;
 
   /// Creates an error flow result with error information.
-  FlowResult.error(this.value) : isError = true;
+  ProcessResult.error(this.value) : isError = true;
 
   /// Optional result value or error message.
   final String? value;
@@ -624,10 +624,10 @@ class FlowResult {
   /// Whether this result represents an error (true) or success (false).
   final bool isError;
 
-  factory FlowResult.fromJson(Map<String, dynamic> json) {
+  factory ProcessResult.fromJson(Map<String, dynamic> json) {
     return (json['isError'] as bool)
-        ? FlowResult.error(json['value'])
-        : FlowResult.ok(json['value']);
+        ? ProcessResult.error(json['value'])
+        : ProcessResult.ok(json['value']);
   }
 
   Map<String, dynamic> toJson() {
