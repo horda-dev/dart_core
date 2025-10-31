@@ -1,3 +1,7 @@
+## 0.17.0
+
+ - **BREAKING**: rename `FlowResult` to `ProcessResult`
+
 ## 0.16.0
 
  - **FEAT**: add kSingletonId constant for singleton entity support.

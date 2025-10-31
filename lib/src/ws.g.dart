@@ -155,7 +155,7 @@ Map<String, dynamic> _$CallCommandResWsMsgToJson(
 DispatchEventResWsMsg _$DispatchEventResWsMsgFromJson(
   Map<String, dynamic> json,
 ) => DispatchEventResWsMsg(
-  FlowResult.fromJson(json['flowResult'] as Map<String, dynamic>),
+  ProcessResult.fromJson(json['flowResult'] as Map<String, dynamic>),
 );
 
 Map<String, dynamic> _$DispatchEventResWsMsgToJson(

@@ -592,7 +592,7 @@ class DispatchEventResWsMsg implements WsMessage {
   DispatchEventResWsMsg(this.result);
 
   @JsonKey(name: 'flowResult')
-  final FlowResult result;
+  final ProcessResult result;
 
   @override
   final messageType = 'dispatchres';
