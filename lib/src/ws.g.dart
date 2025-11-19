@@ -58,7 +58,6 @@ ActorViewSub _$ActorViewSubFromJson(Map<String, dynamic> json) => ActorViewSub(
   json['entityName'] as String,
   json['id'] as String,
   json['name'] as String,
-  json['ver'] as String,
 );
 
 Map<String, dynamic> _$ActorViewSubToJson(ActorViewSub instance) =>
@@ -66,7 +65,6 @@ Map<String, dynamic> _$ActorViewSubToJson(ActorViewSub instance) =>
       'entityName': instance.entityName,
       'id': instance.id,
       'name': instance.name,
-      'ver': instance.changeId,
     };
 
 SubscribeViewsWsMsg _$SubscribeViewsWsMsgFromJson(Map<String, dynamic> json) =>

@@ -249,9 +249,9 @@ class QueryResultWsMsg implements WsMessage {
 
 @JsonSerializable()
 class ActorViewSub {
-  ActorViewSub(this.entityName, this.id, this.name, this.changeId);
+  ActorViewSub(this.entityName, this.id, this.name);
 
-  ActorViewSub.attr(this.id, this.name, this.changeId) : entityName = '';
+  ActorViewSub.attr(this.id, this.name) : entityName = '';
 
   final String entityName;
 
@@ -262,9 +262,6 @@ class ActorViewSub {
   /// actor's view name or attribute name
   @JsonKey(name: 'name')
   final String name;
-
-  @JsonKey(name: 'ver')
-  final String changeId;
 
   String get subKey {
     if (entityName.isEmpty) {
@@ -281,7 +278,7 @@ class ActorViewSub {
 
   @override
   String toString() {
-    return '(id: $id, name: $name, ver: $changeId)';
+    return '(id: $id, name: $name)';
   }
 }
 
