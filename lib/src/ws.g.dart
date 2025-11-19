@@ -67,25 +67,6 @@ Map<String, dynamic> _$ActorViewSubToJson(ActorViewSub instance) =>
       'name': instance.name,
     };
 
-SubscribeViewsWsMsg _$SubscribeViewsWsMsgFromJson(Map<String, dynamic> json) =>
-    SubscribeViewsWsMsg(
-      (json['subs'] as List<dynamic>)
-          .map((e) => ActorViewSub.fromJson(e as Map<String, dynamic>))
-          .toList(),
-    );
-
-Map<String, dynamic> _$SubscribeViewsWsMsgToJson(
-  SubscribeViewsWsMsg instance,
-) => <String, dynamic>{'subs': instance.subs};
-
-SubscribeViewsAckWsMsg _$SubscribeViewsAckWsMsgFromJson(
-  Map<String, dynamic> json,
-) => SubscribeViewsAckWsMsg();
-
-Map<String, dynamic> _$SubscribeViewsAckWsMsgToJson(
-  SubscribeViewsAckWsMsg instance,
-) => <String, dynamic>{};
-
 SubscribeActorWsMsg _$SubscribeActorWsMsgFromJson(Map<String, dynamic> json) =>
     SubscribeActorWsMsg(json['actorId'] as String);
 

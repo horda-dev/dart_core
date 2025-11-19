@@ -50,8 +50,6 @@ class WsMessageBox {
         'callres' => CallCommandResWsMsg.fromJson,
         'dispatch' => DispatchEventWsMsg.fromJson,
         'dispatchres' => DispatchEventResWsMsg.fromJson,
-        'subv' => SubscribeViewsWsMsg.fromJson,
-        'subvack' => SubscribeViewsAckWsMsg.fromJson,
         'suba' => SubscribeActorWsMsg.fromJson,
         'subares' => SubscribeActorResWsMsg.fromJson,
         'unsuba' => UnsubscribeActorWsMsg.fromJson,
@@ -280,42 +278,6 @@ class ActorViewSub {
   String toString() {
     return '(id: $id, name: $name)';
   }
-}
-
-@JsonSerializable()
-class SubscribeViewsWsMsg implements WsMessage {
-  SubscribeViewsWsMsg(this.subs);
-
-  final List<ActorViewSub> subs;
-
-  @override
-  String get messageType => 'subv';
-
-  factory SubscribeViewsWsMsg.fromJson(Map<String, dynamic> json) =>
-      _$SubscribeViewsWsMsgFromJson(json);
-
-  @override
-  Map<String, dynamic> toJson() => _$SubscribeViewsWsMsgToJson(this);
-
-  @override
-  String toString() => 'SubscribeViews(count: ${subs.length})';
-}
-
-@JsonSerializable()
-class SubscribeViewsAckWsMsg implements WsMessage {
-  SubscribeViewsAckWsMsg();
-
-  @override
-  String get messageType => 'subvack';
-
-  factory SubscribeViewsAckWsMsg.fromJson(Map<String, dynamic> json) =>
-      _$SubscribeViewsAckWsMsgFromJson(json);
-
-  @override
-  Map<String, dynamic> toJson() => _$SubscribeViewsAckWsMsgToJson(this);
-
-  @override
-  String toString() => 'SubscribeViewsAck()';
 }
 
 @JsonSerializable()
