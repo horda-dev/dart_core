@@ -31,9 +31,6 @@ QueryAndSubscribeWsMsg _$QueryAndSubscribeWsMsgFromJson(
 ) => QueryAndSubscribeWsMsg(
   actorId: json['actorId'] as String,
   def: QueryAndSubscribeWsMsg._defFromJson(json['def'] as Map<String, dynamic>),
-  subs: (json['subs'] as List<dynamic>)
-      .map((e) => ActorViewSub.fromJson(e as Map<String, dynamic>))
-      .toList(),
 );
 
 Map<String, dynamic> _$QueryAndSubscribeWsMsgToJson(
@@ -41,7 +38,6 @@ Map<String, dynamic> _$QueryAndSubscribeWsMsgToJson(
 ) => <String, dynamic>{
   'actorId': instance.actorId,
   'def': QueryAndSubscribeWsMsg._defToJson(instance.def),
-  'subs': instance.subs,
 };
 
 QueryResultWsMsg _$QueryResultWsMsgFromJson(Map<String, dynamic> json) =>

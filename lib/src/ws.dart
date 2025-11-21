@@ -182,7 +182,6 @@ class QueryAndSubscribeWsMsg implements WsMessage {
   QueryAndSubscribeWsMsg({
     required this.actorId,
     required this.def,
-    required this.subs,
   });
 
   @override
@@ -194,9 +193,6 @@ class QueryAndSubscribeWsMsg implements WsMessage {
   /// Definition specifying which views to query and how.
   @JsonKey(fromJson: _defFromJson, toJson: _defToJson)
   final QueryDef def;
-
-  /// List of view subscriptions to establish.
-  final List<ActorViewSub> subs;
 
   factory QueryAndSubscribeWsMsg.fromJson(Map<String, dynamic> json) =>
       _$QueryAndSubscribeWsMsgFromJson(json);
@@ -213,8 +209,7 @@ class QueryAndSubscribeWsMsg implements WsMessage {
   }
 
   @override
-  String toString() =>
-      'QueryAndSubscribeWsMsg(actor: $actorId, subs: ${subs.length})';
+  String toString() => 'QueryAndSubscribeWsMsg(actor: $actorId)';
 }
 
 /// Message containing the results of a query request.
