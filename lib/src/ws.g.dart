@@ -26,6 +26,20 @@ Map<String, dynamic> _$QueryWsMsgToJson(QueryWsMsg instance) =>
       'def': QueryWsMsg._defToJson(instance.def),
     };
 
+QueryAndSubscribeWsMsg _$QueryAndSubscribeWsMsgFromJson(
+  Map<String, dynamic> json,
+) => QueryAndSubscribeWsMsg(
+  actorId: json['actorId'] as String,
+  def: QueryAndSubscribeWsMsg._defFromJson(json['def'] as Map<String, dynamic>),
+);
+
+Map<String, dynamic> _$QueryAndSubscribeWsMsgToJson(
+  QueryAndSubscribeWsMsg instance,
+) => <String, dynamic>{
+  'actorId': instance.actorId,
+  'def': QueryAndSubscribeWsMsg._defToJson(instance.def),
+};
+
 QueryResultWsMsg _$QueryResultWsMsgFromJson(Map<String, dynamic> json) =>
     QueryResultWsMsg(
       result: QueryResultWsMsg._resFromJson(
@@ -40,7 +54,6 @@ ActorViewSub _$ActorViewSubFromJson(Map<String, dynamic> json) => ActorViewSub(
   json['entityName'] as String,
   json['id'] as String,
   json['name'] as String,
-  json['ver'] as String,
 );
 
 Map<String, dynamic> _$ActorViewSubToJson(ActorViewSub instance) =>
@@ -48,7 +61,6 @@ Map<String, dynamic> _$ActorViewSubToJson(ActorViewSub instance) =>
       'entityName': instance.entityName,
       'id': instance.id,
       'name': instance.name,
-      'ver': instance.changeId,
     };
 
 SubscribeViewsWsMsg _$SubscribeViewsWsMsgFromJson(Map<String, dynamic> json) =>

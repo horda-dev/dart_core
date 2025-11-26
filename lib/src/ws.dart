@@ -42,6 +42,7 @@ class WsMessageBox {
       var fac = switch (type) {
         'welcome' => WelcomeWsMsg.fromJson,
         'query' => QueryWsMsg.fromJson,
+        'querysub' => QueryAndSubscribeWsMsg.fromJson,
         'query_result' => QueryResultWsMsg.fromJson,
         'send' => SendCommandWsMsg.fromJson,
         'sendack' => SendCommandAckWsMsg.fromJson,
@@ -168,6 +169,49 @@ class QueryWsMsg implements WsMessage {
   String toString() => 'QueryWsMsg(actor: $actorId)';
 }
 
+/// Message requesting an atomic query and subscribe operation on an entity's views.
+///
+/// Sent by clients to retrieve current view data and establish subscriptions
+/// in a single atomic operation, preventing race conditions.
+/// Since it essentially combines querying and subscribing, the expected response is as follows:
+/// - First, a single [QueryResultWsMsg]
+/// - Afterwards, zero or more [ViewChangeWsMsg]
+@JsonSerializable()
+class QueryAndSubscribeWsMsg implements WsMessage {
+  /// Creates a query and subscribe message for the specified entity, query definition, and subscriptions.
+  QueryAndSubscribeWsMsg({
+    required this.actorId,
+    required this.def,
+  });
+
+  @override
+  String get messageType => 'querysub';
+
+  /// ID of the entity to query.
+  final String actorId;
+
+  /// Definition specifying which views to query and how.
+  @JsonKey(fromJson: _defFromJson, toJson: _defToJson)
+  final QueryDef def;
+
+  factory QueryAndSubscribeWsMsg.fromJson(Map<String, dynamic> json) =>
+      _$QueryAndSubscribeWsMsgFromJson(json);
+
+  @override
+  Map<String, dynamic> toJson() => _$QueryAndSubscribeWsMsgToJson(this);
+
+  static QueryDef _defFromJson(Map<String, dynamic> json) {
+    return QueryDef.fromJson(json);
+  }
+
+  static Map<String, dynamic> _defToJson(QueryDef def) {
+    return def.toJson();
+  }
+
+  @override
+  String toString() => 'QueryAndSubscribeWsMsg(actor: $actorId)';
+}
+
 /// Message containing the results of a query request.
 ///
 /// Sent by server in response to QueryWsMsg with the requested view data.
@@ -200,9 +244,9 @@ class QueryResultWsMsg implements WsMessage {
 
 @JsonSerializable()
 class ActorViewSub {
-  ActorViewSub(this.entityName, this.id, this.name, this.changeId);
+  ActorViewSub(this.entityName, this.id, this.name);
 
-  ActorViewSub.attr(this.id, this.name, this.changeId) : entityName = '';
+  ActorViewSub.attr(this.id, this.name) : entityName = '';
 
   final String entityName;
 
@@ -213,9 +257,6 @@ class ActorViewSub {
   /// actor's view name or attribute name
   @JsonKey(name: 'name')
   final String name;
-
-  @JsonKey(name: 'ver')
-  final String changeId;
 
   String get subKey {
     if (entityName.isEmpty) {
@@ -232,7 +273,7 @@ class ActorViewSub {
 
   @override
   String toString() {
-    return '(id: $id, name: $name, ver: $changeId)';
+    return '(id: $id, name: $name)';
   }
 }
 
