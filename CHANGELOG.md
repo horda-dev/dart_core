@@ -1,6 +1,6 @@
 ## 0.18.0
 
-- **FEAT**: add `QueryAndSubscribeWsMsg` which allows an atomic query and subscribe request
+- **FEAT**: add `QueryAndSubscribeWsMsg` which allows for an atomic query and subscribe request
 
 ## 0.17.0
 
