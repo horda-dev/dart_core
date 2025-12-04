@@ -184,25 +184,28 @@ abstract class ListViewChange extends Change {
 
 /// Change representing an item being added to a list view.
 ///
-/// Appends a new entity reference to the end of the list.
+/// Appends a new entity reference to the end of the list with a unique key.
 class ListViewItemAdded extends ListViewChange {
   /// Creates a list item addition change.
-  ListViewItemAdded(this.itemId);
+  ListViewItemAdded(this.key, this.itemId);
+
+  /// Unique key for this list position.
+  final String key;
 
   /// ID of the entity to add to the list.
   final EntityId itemId;
 
   factory ListViewItemAdded.fromJson(Map<String, dynamic> json) {
-    return ListViewItemAdded(json['item']);
+    return ListViewItemAdded(json['key'], json['item']);
   }
 
   @override
   Map<String, dynamic> toJson() {
-    return {'item': itemId};
+    return {'key': key, 'item': itemId};
   }
 
   @override
-  String format() => itemId;
+  String format() => '$key: $itemId';
 }
 
 /// Change representing an item being added to a list view only if not already present.
@@ -211,41 +214,44 @@ class ListViewItemAdded extends ListViewChange {
 /// preventing duplicate entries.
 class ListViewItemAddedIfAbsent extends ListViewChange {
   /// Creates a conditional list item addition change.
-  ListViewItemAddedIfAbsent(this.itemId);
+  ListViewItemAddedIfAbsent(this.key, this.itemId);
+
+  /// Unique key for this list position.
+  final String key;
 
   /// ID of the entity to add to the list if not already present.
   final EntityId itemId;
 
   factory ListViewItemAddedIfAbsent.fromJson(Map<String, dynamic> json) {
-    return ListViewItemAddedIfAbsent(json['item']);
+    return ListViewItemAddedIfAbsent(json['key'], json['item']);
   }
 
   @override
   Map<String, dynamic> toJson() {
-    return {'item': itemId};
+    return {'key': key, 'item': itemId};
   }
 
   @override
-  String format() => itemId;
+  String format() => '$key: $itemId';
 }
 
 /// Change representing an item being removed from a list view.
 ///
-/// Removes the first occurrence of the specified entity reference from the list.
+/// Removes the item with the specified key from the list.
 class ListViewItemRemoved extends ListViewChange {
   /// Creates a list item removal change.
-  ListViewItemRemoved(this.itemId);
+  ListViewItemRemoved(this.key);
 
-  /// ID of the entity to remove from the list.
-  final EntityId itemId;
+  /// Key of the item to remove from the list.
+  final String key;
 
   factory ListViewItemRemoved.fromJson(Map<String, dynamic> json) {
-    return ListViewItemRemoved(json['item']);
+    return ListViewItemRemoved(json['key']);
   }
 
   @override
   Map<String, dynamic> toJson() {
-    return {'item': itemId};
+    return {'key': key};
   }
 }
 
