@@ -224,6 +224,37 @@ class RefQueryResult extends ViewQueryResult {
   }
 }
 
+/// A single item in a list view with its key (XID) and value (referenced entity ID).
+///
+/// Represents the pairing of a unique key (XID) with an entity reference,
+/// allowing lists to maintain stable identifiers independent of the entity values.
+class ListItem {
+  /// Creates a list item with the specified key and value.
+  ListItem(this.key, this.value);
+
+  /// Creates a list item from JSON.
+  factory ListItem.fromJson(Map<String, dynamic> json) {
+    return ListItem(
+      json['key'] as String,
+      json['value'] as String,
+    );
+  }
+
+  /// Unique identifier for this list position (XID).
+  final String key;
+
+  /// The referenced entity ID.
+  final EntityId value;
+
+  /// Converts the list item to JSON.
+  Map<String, dynamic> toJson() {
+    return {
+      'key': key,
+      'value': value,
+    };
+  }
+}
+
 /// Query result for list views.
 ///
 /// Contains a list of entity references with per-item query results
@@ -232,9 +263,9 @@ class ListQueryResult extends ViewQueryResult {
   /// Creates a list query result with items and attributes.
   ListQueryResult(super.value, this.attrs, super.changeId, this.items);
 
-  /// List of entity IDs in this view.
+  /// List of items with their keys and entity IDs in this view.
   @override
-  Iterable<EntityId> get value => super.value;
+  Iterable<ListItem> get value => super.value;
 
   /// Query results for each item in the list.
   final Iterable<QueryResult> items;
@@ -245,17 +276,19 @@ class ListQueryResult extends ViewQueryResult {
   factory ListQueryResult.fromJson(Map<String, dynamic> json) {
     assert(json['type'] == 'list');
 
-    List<EntityId> val = List<EntityId>.from(json['val']);
+    List<Map<String, dynamic>> valJson = List<Map<String, dynamic>>.from(
+      json['val'],
+    );
     Map<String, Map<String, dynamic>> attrs = Map.from(json['attrs'] ?? {});
     List<Map<String, dynamic>> itemsJson = List.from(json['items']);
     String ver = json['chid'];
 
-    var value = <EntityId>[];
+    var value = <ListItem>[];
     var items = <QueryResult>[];
 
-    for (var pair in IterableZip([val, itemsJson])) {
-      value.add(pair[0] as EntityId);
-      items.add(QueryResult.fromJson(pair[1] as Map<String, dynamic>));
+    for (var pair in IterableZip([valJson, itemsJson])) {
+      value.add(ListItem.fromJson(pair[0]));
+      items.add(QueryResult.fromJson(pair[1]));
     }
 
     return ListQueryResult(value, attrs, ver, items);
@@ -265,7 +298,7 @@ class ListQueryResult extends ViewQueryResult {
   Map<String, dynamic> toJson() {
     return {
       'type': 'list',
-      'val': value.toList(),
+      'val': value.map((item) => item.toJson()).toList(),
       if (attrs.isNotEmpty) 'attrs': attrs,
       'chid': changeId,
       'items': items.map((i) => i.toJson()).toList(),
@@ -403,7 +436,10 @@ extension QueryResultBuilderManual on QueryResultBuilder {
     String name,
     Map<RefIdNamePair, dynamic> attrs,
     String changeId,
-    void Function(Map<EntityId, QueryResultBuilder> items) fun,
+    void Function(
+      Map<String, ({EntityId value, QueryResultBuilder query})> items,
+    )
+    fun,
   ) {
     final attrsMap = <String, Map<String, dynamic>>{};
 
@@ -412,23 +448,37 @@ extension QueryResultBuilderManual on QueryResultBuilder {
       attr[kv.key.name] = kv.value;
     }
 
-    var items = <EntityId, QueryResultBuilder>{};
+    var items = <String, ({EntityId value, QueryResultBuilder query})>{};
     fun(items);
+
+    // Create ListItem objects from the XID keys and EntityId values
+    var listItems = items.entries
+        .map((e) => ListItem(e.key, e.value.value))
+        .toList();
+
+    // Extract the query builders in the same order
+    var queryBuilders = items.entries.map((e) => e.value.query).toList();
+
     add(
       ListQueryResultBuilder(
         name,
         attrsMap,
-        ViewSnapshot(items.keys, changeId),
-        items.values.toList(),
+        ViewSnapshot(listItems, changeId),
+        queryBuilders,
       ),
     );
   }
 }
 
-extension ListQueryResultBuilderManual on Map<EntityId, QueryResultBuilder> {
-  void item(EntityId actorId, void Function(QueryResultBuilder rb) fun) {
+extension ListQueryResultBuilderManual
+    on Map<String, ({EntityId value, QueryResultBuilder query})> {
+  void item(
+    String key,
+    EntityId value,
+    void Function(QueryResultBuilder rb) fun,
+  ) {
     var qrb = QueryResultBuilder();
     fun(qrb);
-    this[actorId] = qrb;
+    this[key] = (value: value, query: qrb);
   }
 }
