@@ -1,5 +1,9 @@
+import 'package:json_annotation/json_annotation.dart';
+
 import 'id.dart';
 import 'message.dart';
+
+part 'view.g.dart';
 
 /// Base class for all view changes in the Horda platform.
 ///
@@ -492,4 +496,73 @@ class CounterAttrReset extends AttributeChange {
   Map<String, dynamic> toJson() {
     return {'id': attrId, 'name': attrName, 'val': newValue};
   }
+}
+
+/// Base class for changes to list pages during pagination synchronization.
+///
+/// List page changes represent modifications to paginated views of lists,
+/// with each change associated with a specific page window identified by pageID.
+abstract class ListPageChange extends Change {
+  /// Creates a list page change for the specified page.
+  ListPageChange({required this.pageId});
+
+  /// The page ID identifying which page window the change applies to.
+  final String pageId;
+
+  @override
+  bool get isOverwriting => false;
+}
+
+/// Page sync change representing an item added to a list page.
+@JsonSerializable()
+class ListPageItemAdded extends ListPageChange {
+  ListPageItemAdded({
+    required super.pageId,
+    required this.key,
+    required this.value,
+  });
+
+  /// The key of the added item.
+  final String key;
+
+  /// The value of the added item.
+  final String value;
+
+  factory ListPageItemAdded.fromJson(Map<String, dynamic> json) =>
+      _$ListPageItemAddedFromJson(json);
+
+  @override
+  Map<String, dynamic> toJson() => _$ListPageItemAddedToJson(this);
+}
+
+/// Page sync change representing an item removed from a list page.
+@JsonSerializable()
+class ListPageItemRemoved extends ListPageChange {
+  ListPageItemRemoved({
+    required super.pageId,
+    required this.key,
+  });
+
+  /// The key of the removed item.
+  final String key;
+
+  factory ListPageItemRemoved.fromJson(Map<String, dynamic> json) =>
+      _$ListPageItemRemovedFromJson(json);
+
+  @override
+  Map<String, dynamic> toJson() => _$ListPageItemRemovedToJson(this);
+}
+
+/// Page sync change representing a list page being cleared.
+@JsonSerializable()
+class ListPageCleared extends ListPageChange {
+  ListPageCleared({
+    required super.pageId,
+  });
+
+  factory ListPageCleared.fromJson(Map<String, dynamic> json) =>
+      _$ListPageClearedFromJson(json);
+
+  @override
+  Map<String, dynamic> toJson() => _$ListPageClearedToJson(this);
 }
