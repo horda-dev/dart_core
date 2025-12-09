@@ -54,6 +54,7 @@ ActorViewSub _$ActorViewSubFromJson(Map<String, dynamic> json) => ActorViewSub(
   json['entityName'] as String,
   json['id'] as String,
   json['name'] as String,
+  json['pageId'] as String?,
 );
 
 Map<String, dynamic> _$ActorViewSubToJson(ActorViewSub instance) =>
@@ -61,6 +62,7 @@ Map<String, dynamic> _$ActorViewSubToJson(ActorViewSub instance) =>
       'entityName': instance.entityName,
       'id': instance.id,
       'name': instance.name,
+      'pageId': ?instance.pageId,
     };
 
 SubscribeViewsWsMsg _$SubscribeViewsWsMsgFromJson(Map<String, dynamic> json) =>
