@@ -162,7 +162,8 @@ class ListQueryDef extends ViewQueryDef {
     required this.query,
     required this.attrs,
     super.subscribe,
-    required this.startAt,
+    this.startAfter = '',
+    required this.pageID,
     required this.length,
   });
 
@@ -172,8 +173,11 @@ class ListQueryDef extends ViewQueryDef {
   /// List of attribute names to include for each list item.
   List<String> attrs;
 
-  /// Zero-based starting index for pagination.
-  final int startAt;
+  /// Cursor for pagination - start after this item key.
+  final String startAfter;
+
+  /// Page identifier for tracking pagination state.
+  final String pageID;
 
   /// Maximum number of items to return (0 for no limit).
   final int length;
@@ -183,13 +187,15 @@ class ListQueryDef extends ViewQueryDef {
 
     Map<String, dynamic> queryJson = json['query'];
     List<String> attrs = List.from(json['attrs'] ?? []);
-    int start = json['start'] ?? 0;
+    String startAfter = json['startAfter'] ?? '';
+    String pageID = json['pageID'] ?? '';
     int len = json['len'] ?? 0;
 
     return ListQueryDef(
       query: QueryDef.fromJson(queryJson),
       attrs: attrs,
-      startAt: start,
+      startAfter: startAfter,
+      pageID: pageID,
       length: len,
     );
   }
@@ -200,7 +206,8 @@ class ListQueryDef extends ViewQueryDef {
       'type': 'list',
       'query': query.toJson(),
       if (attrs.isNotEmpty) 'attrs': attrs,
-      if (startAt != 0) 'start': startAt,
+      if (startAfter.isNotEmpty) 'startAfter': startAfter,
+      'pageID': pageID,
       if (length != 0) 'len': length,
     };
   }
@@ -316,7 +323,8 @@ class ListQueryDefBuilder extends ViewQueryDefBuilder {
     super.name,
     this.attrs, {
     super.subscribe = false,
-    this.startAt = 0,
+    this.startAfter = '',
+    required this.pageID,
     this.length = 0,
   });
 
@@ -325,8 +333,11 @@ class ListQueryDefBuilder extends ViewQueryDefBuilder {
   /// List of attribute names to include for each item.
   final List<String> attrs;
 
-  /// Starting index for pagination.
-  final int startAt;
+  /// Cursor for pagination - start after this item key.
+  final String startAfter;
+
+  /// Page identifier for tracking pagination state.
+  final String pageID;
 
   /// Maximum number of items to return.
   final int length;
@@ -347,7 +358,8 @@ class ListQueryDefBuilder extends ViewQueryDefBuilder {
       query: QueryDef(entityName, queryViews),
       attrs: attrs,
       subscribe: subscribe,
-      startAt: startAt,
+      startAfter: startAfter,
+      pageID: pageID,
       length: length,
     );
   }
@@ -383,9 +395,17 @@ extension QueryDefBuilderManual on QueryDefBuilder {
     String entityName,
     String name,
     List<String> attrs,
-    void Function(ListQueryDefBuilder qb) fun,
-  ) {
-    final qb = ListQueryDefBuilder(entityName, name, attrs);
+    String pageID,
+    void Function(ListQueryDefBuilder qb) fun, {
+    String startAfter = '',
+  }) {
+    final qb = ListQueryDefBuilder(
+      entityName,
+      name,
+      attrs,
+      pageID: pageID,
+      startAfter: startAfter,
+    );
     fun(qb);
     add(qb);
   }
