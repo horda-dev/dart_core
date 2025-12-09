@@ -163,7 +163,7 @@ class ListQueryDef extends ViewQueryDef {
     required this.attrs,
     super.subscribe,
     this.startAfter = '',
-    required this.pageID,
+    required this.pageId,
     required this.length,
   });
 
@@ -177,7 +177,7 @@ class ListQueryDef extends ViewQueryDef {
   final String startAfter;
 
   /// Page identifier for tracking pagination state.
-  final String pageID;
+  final String pageId;
 
   /// Maximum number of items to return (0 for no limit).
   final int length;
@@ -188,14 +188,14 @@ class ListQueryDef extends ViewQueryDef {
     Map<String, dynamic> queryJson = json['query'];
     List<String> attrs = List.from(json['attrs'] ?? []);
     String startAfter = json['startAfter'] ?? '';
-    String pageID = json['pageID'] ?? '';
+    String pageId = json['pageId'] ?? '';
     int len = json['len'] ?? 0;
 
     return ListQueryDef(
       query: QueryDef.fromJson(queryJson),
       attrs: attrs,
       startAfter: startAfter,
-      pageID: pageID,
+      pageId: pageId,
       length: len,
     );
   }
@@ -207,7 +207,7 @@ class ListQueryDef extends ViewQueryDef {
       'query': query.toJson(),
       if (attrs.isNotEmpty) 'attrs': attrs,
       if (startAfter.isNotEmpty) 'startAfter': startAfter,
-      'pageID': pageID,
+      'pageId': pageId,
       if (length != 0) 'len': length,
     };
   }
@@ -324,7 +324,7 @@ class ListQueryDefBuilder extends ViewQueryDefBuilder {
     this.attrs, {
     super.subscribe = false,
     this.startAfter = '',
-    required this.pageID,
+    required this.pageId,
     this.length = 0,
   });
 
@@ -337,7 +337,7 @@ class ListQueryDefBuilder extends ViewQueryDefBuilder {
   final String startAfter;
 
   /// Page identifier for tracking pagination state.
-  final String pageID;
+  final String pageId;
 
   /// Maximum number of items to return.
   final int length;
@@ -359,7 +359,7 @@ class ListQueryDefBuilder extends ViewQueryDefBuilder {
       attrs: attrs,
       subscribe: subscribe,
       startAfter: startAfter,
-      pageID: pageID,
+      pageId: pageId,
       length: length,
     );
   }
@@ -395,7 +395,7 @@ extension QueryDefBuilderManual on QueryDefBuilder {
     String entityName,
     String name,
     List<String> attrs,
-    String pageID,
+    String pageId,
     void Function(ListQueryDefBuilder qb) fun, {
     String startAfter = '',
   }) {
@@ -403,7 +403,7 @@ extension QueryDefBuilderManual on QueryDefBuilder {
       entityName,
       name,
       attrs,
-      pageID: pageID,
+      pageId: pageId,
       startAfter: startAfter,
     );
     fun(qb);
