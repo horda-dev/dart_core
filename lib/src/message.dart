@@ -767,6 +767,12 @@ void kRegisterFluirMessage() {
   kRegisterMessageFactory<ListViewItemRemoved>(ListViewItemRemoved.fromJson);
   kRegisterMessageFactory<ListViewItemChanged>(ListViewItemChanged.fromJson);
 
+  // list view page sync
+
+  kRegisterMessageFactory<ListPageCleared>(ListPageCleared.fromJson);
+  kRegisterMessageFactory<ListPageItemAdded>(ListPageItemAdded.fromJson);
+  kRegisterMessageFactory<ListPageItemRemoved>(ListPageItemRemoved.fromJson);
+
   // value attr
 
   kRegisterMessageFactory<RefValueAttributeChanged>(

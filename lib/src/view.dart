@@ -1,5 +1,9 @@
+import 'package:json_annotation/json_annotation.dart';
+
 import 'id.dart';
 import 'message.dart';
+
+part 'view.g.dart';
 
 /// Base class for all view changes in the Horda platform.
 ///
@@ -184,25 +188,28 @@ abstract class ListViewChange extends Change {
 
 /// Change representing an item being added to a list view.
 ///
-/// Appends a new entity reference to the end of the list.
+/// Appends a new entity reference to the end of the list with a unique key.
 class ListViewItemAdded extends ListViewChange {
   /// Creates a list item addition change.
-  ListViewItemAdded(this.itemId);
+  ListViewItemAdded(this.key, this.value);
+
+  /// Unique key for this list position.
+  final String key;
 
   /// ID of the entity to add to the list.
-  final EntityId itemId;
+  final EntityId value;
 
   factory ListViewItemAdded.fromJson(Map<String, dynamic> json) {
-    return ListViewItemAdded(json['item']);
+    return ListViewItemAdded(json['key'], json['value']);
   }
 
   @override
   Map<String, dynamic> toJson() {
-    return {'item': itemId};
+    return {'key': key, 'value': value};
   }
 
   @override
-  String format() => itemId;
+  String format() => '$key: $value';
 }
 
 /// Change representing an item being added to a list view only if not already present.
@@ -211,90 +218,97 @@ class ListViewItemAdded extends ListViewChange {
 /// preventing duplicate entries.
 class ListViewItemAddedIfAbsent extends ListViewChange {
   /// Creates a conditional list item addition change.
-  ListViewItemAddedIfAbsent(this.itemId);
+  ListViewItemAddedIfAbsent(this.key, this.value);
+
+  /// Unique key for this list position.
+  final String key;
 
   /// ID of the entity to add to the list if not already present.
-  final EntityId itemId;
+  final EntityId value;
 
   factory ListViewItemAddedIfAbsent.fromJson(Map<String, dynamic> json) {
-    return ListViewItemAddedIfAbsent(json['item']);
+    return ListViewItemAddedIfAbsent(json['key'], json['value']);
   }
 
   @override
   Map<String, dynamic> toJson() {
-    return {'item': itemId};
+    return {'key': key, 'value': value};
   }
 
   @override
-  String format() => itemId;
+  String format() => '$key: $value';
 }
 
 /// Change representing an item being removed from a list view.
 ///
-/// Removes the first occurrence of the specified entity reference from the list.
+/// Removes the item with the specified key from the list.
 class ListViewItemRemoved extends ListViewChange {
   /// Creates a list item removal change.
-  ListViewItemRemoved(this.itemId);
+  ListViewItemRemoved(this.key);
 
-  /// ID of the entity to remove from the list.
-  final EntityId itemId;
+  /// Key of the item to remove from the list.
+  final String key;
 
   factory ListViewItemRemoved.fromJson(Map<String, dynamic> json) {
-    return ListViewItemRemoved(json['item']);
+    return ListViewItemRemoved(json['key']);
   }
 
   @override
   Map<String, dynamic> toJson() {
-    return {'item': itemId};
+    return {'key': key};
   }
 }
 
 /// Change representing an item in a list view being replaced with another.
 ///
-/// Replaces the first occurrence of one entity reference with another.
+/// Replaces the item at the specified key with a new entity reference.
+///
+/// This change is not supported yet.
 class ListViewItemChanged extends ListViewChange {
   /// Creates a list item replacement change.
-  ListViewItemChanged({required this.oldItemId, required this.newItemId});
+  ListViewItemChanged({required this.key, required this.value});
 
-  /// ID of the entity to replace in the list.
-  final EntityId oldItemId;
+  /// Key of the item to replace in the list.
+  final String key;
 
-  /// ID of the entity to replace it with.
-  final EntityId newItemId;
+  /// ID of the new entity to replace it with.
+  final EntityId value;
 
   factory ListViewItemChanged.fromJson(Map<String, dynamic> json) {
     return ListViewItemChanged(
-      oldItemId: json['oitem'],
-      newItemId: json['nitem'],
+      key: json['key'],
+      value: json['value'],
     );
   }
 
   @override
   Map<String, dynamic> toJson() {
-    return {'oitem': oldItemId, 'nitem': newItemId};
+    return {'key': key, 'value': value};
   }
 }
 
 /// Change representing an item in a list view being moved to a new position.
 ///
-/// Moves the specified entity reference to a different index in the list.
+/// Moves the item with the specified key to a new position in the list.
+///
+/// This change is not supported yet.
 class ListViewItemMoved extends ListViewChange {
   /// Creates a list item move change.
-  ListViewItemMoved(this.itemId, this.newIndex);
+  ListViewItemMoved(this.key, this.toKey);
 
-  /// ID of the entity to move within the list.
-  final EntityId itemId;
+  /// Key of the item to move within the list.
+  final String key;
 
-  /// New zero-based index position for the item.
-  final int newIndex;
+  /// Key of the destination position to move the item to.
+  final String toKey;
 
   factory ListViewItemMoved.fromJson(Map<String, dynamic> json) {
-    return ListViewItemMoved(json['item'], json['idx']);
+    return ListViewItemMoved(json['key'], json['toKey']);
   }
 
   @override
   Map<String, dynamic> toJson() {
-    return {'item': itemId, 'idx': newIndex};
+    return {'key': key, 'toKey': toKey};
   }
 }
 
@@ -482,4 +496,73 @@ class CounterAttrReset extends AttributeChange {
   Map<String, dynamic> toJson() {
     return {'id': attrId, 'name': attrName, 'val': newValue};
   }
+}
+
+/// Base class for changes to list pages during pagination synchronization.
+///
+/// List page changes represent modifications to paginated views of lists,
+/// with each change associated with a specific page window identified by pageId.
+abstract class ListPageChange extends Change {
+  /// Creates a list page change for the specified page.
+  ListPageChange({required this.pageId});
+
+  /// The page ID identifying which page window the change applies to.
+  final String pageId;
+
+  @override
+  bool get isOverwriting => false;
+}
+
+/// Page sync change representing an item added to a list page.
+@JsonSerializable()
+class ListPageItemAdded extends ListPageChange {
+  ListPageItemAdded({
+    required super.pageId,
+    required this.key,
+    required this.value,
+  });
+
+  /// The key of the added item.
+  final String key;
+
+  /// The value of the added item.
+  final String value;
+
+  factory ListPageItemAdded.fromJson(Map<String, dynamic> json) =>
+      _$ListPageItemAddedFromJson(json);
+
+  @override
+  Map<String, dynamic> toJson() => _$ListPageItemAddedToJson(this);
+}
+
+/// Page sync change representing an item removed from a list page.
+@JsonSerializable()
+class ListPageItemRemoved extends ListPageChange {
+  ListPageItemRemoved({
+    required super.pageId,
+    required this.key,
+  });
+
+  /// The key of the removed item.
+  final String key;
+
+  factory ListPageItemRemoved.fromJson(Map<String, dynamic> json) =>
+      _$ListPageItemRemovedFromJson(json);
+
+  @override
+  Map<String, dynamic> toJson() => _$ListPageItemRemovedToJson(this);
+}
+
+/// Page sync change representing a list page being cleared.
+@JsonSerializable()
+class ListPageCleared extends ListPageChange {
+  ListPageCleared({
+    required super.pageId,
+  });
+
+  factory ListPageCleared.fromJson(Map<String, dynamic> json) =>
+      _$ListPageClearedFromJson(json);
+
+  @override
+  Map<String, dynamic> toJson() => _$ListPageClearedToJson(this);
 }

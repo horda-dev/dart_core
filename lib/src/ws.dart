@@ -244,23 +244,37 @@ class QueryResultWsMsg implements WsMessage {
 
 @JsonSerializable()
 class ActorViewSub {
-  ActorViewSub(this.entityName, this.id, this.name);
+  ActorViewSub(this.entityName, this.id, this.name, [this.pageId]);
 
-  ActorViewSub.attr(this.id, this.name) : entityName = '';
+  ActorViewSub.attr(this.id, this.name) : entityName = '', pageId = null;
 
   final String entityName;
 
-  /// actor id or attribute id
+  /// A single entity id or a composite id made of two entity ids separated by dash.
+  ///
+  /// Composite id looks like this: `entityId1-entityId2`
   @JsonKey(name: 'id')
   final String id;
 
-  /// actor's view name or attribute name
+  /// Entity's view name or attribute name
   @JsonKey(name: 'name')
   final String name;
 
+  /// Page identifier for list view pagination.
+  ///
+  /// Only set for list views, null for other view types.
+  @JsonKey(name: 'pageId', includeIfNull: false)
+  final String? pageId;
+
+  /// String representation of a subscription identifier.
   String get subKey {
     if (entityName.isEmpty) {
       return '$id/$name';
+    }
+
+    if (pageId != null && pageId!.isNotEmpty) {
+      // This only applies to list views.
+      return '$entityName/$id/$name:$pageId';
     }
 
     return '$entityName/$id/$name';
@@ -273,7 +287,7 @@ class ActorViewSub {
 
   @override
   String toString() {
-    return '(id: $id, name: $name)';
+    return '(id: $id, name: $name${pageId != null ? ", pageId: $pageId" : ""})';
   }
 }
 
