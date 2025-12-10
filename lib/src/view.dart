@@ -501,7 +501,7 @@ class CounterAttrReset extends AttributeChange {
 /// Base class for changes to list pages during pagination synchronization.
 ///
 /// List page changes represent modifications to paginated views of lists,
-/// with each change associated with a specific page window identified by pageID.
+/// with each change associated with a specific page window identified by pageId.
 abstract class ListPageChange extends Change {
   /// Creates a list page change for the specified page.
   ListPageChange({required this.pageId});
