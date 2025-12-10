@@ -1,3 +1,10 @@
+## 0.19.0
+
+- **BREAKING CHANGE**: List view items now use key-value pairs (ListItem class) instead of plain entity IDs
+- **BREAKING CHANGE**: List view changes updated to use 'key' and 'value' fields instead of 'item'
+- **FEAT**: add list page sync changes (ListPageItemAdded, ListPageItemRemoved, ListPageCleared) for pagination support
+- **FEAT**: add pageId parameter to ActorViewSub for paginated list view subscriptions
+
 ## 0.18.0
 
 - **FEAT**: add `QueryAndSubscribeWsMsg` which allows for an atomic query and subscribe request
