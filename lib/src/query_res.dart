@@ -234,10 +234,7 @@ class ListItem {
 
   /// Creates a list item from JSON.
   factory ListItem.fromJson(Map<String, dynamic> json) {
-    return ListItem(
-      json['key'] as String,
-      json['value'] as String,
-    );
+    return ListItem(json['key'] as String, json['value'] as String);
   }
 
   /// Unique identifier for this list position (XID).
@@ -248,10 +245,12 @@ class ListItem {
 
   /// Converts the list item to JSON.
   Map<String, dynamic> toJson() {
-    return {
-      'key': key,
-      'value': value,
-    };
+    return {'key': key, 'value': value};
+  }
+
+  @override
+  String toString() {
+    return 'ListItem(key:$key, value:$value)';
   }
 }
 
