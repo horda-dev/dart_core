@@ -164,7 +164,6 @@ class ListQueryDef extends ViewQueryDef {
     super.subscribe,
     this.startAfter = '',
     this.endBefore = '',
-    required this.pageId,
     required this.limit,
   });
 
@@ -180,9 +179,6 @@ class ListQueryDef extends ViewQueryDef {
   /// Cursor for reverse pagination - end before this item key.
   final String endBefore;
 
-  /// Page identifier for tracking pagination state.
-  final String pageId;
-
   /// Maximum number of items to return (0 for default).
   final int limit;
 
@@ -193,7 +189,6 @@ class ListQueryDef extends ViewQueryDef {
     List<String> attrs = List.from(json['attrs'] ?? []);
     String startAfter = json['startAfter'] ?? '';
     String endBefore = json['endBefore'] ?? '';
-    String pageId = json['pageId'] ?? '';
     int limit = json['limit'] ?? 0;
 
     return ListQueryDef(
@@ -201,7 +196,6 @@ class ListQueryDef extends ViewQueryDef {
       attrs: attrs,
       startAfter: startAfter,
       endBefore: endBefore,
-      pageId: pageId,
       limit: limit,
     );
   }
@@ -214,7 +208,6 @@ class ListQueryDef extends ViewQueryDef {
       if (attrs.isNotEmpty) 'attrs': attrs,
       if (startAfter.isNotEmpty) 'startAfter': startAfter,
       if (endBefore.isNotEmpty) 'endBefore': endBefore,
-      'pageId': pageId,
       if (limit != 0) 'limit': limit,
     };
   }
@@ -332,7 +325,6 @@ class ListQueryDefBuilder extends ViewQueryDefBuilder {
     super.subscribe = false,
     this.startAfter = '',
     this.endBefore = '',
-    required this.pageId,
     this.limit = 0,
   });
 
@@ -346,9 +338,6 @@ class ListQueryDefBuilder extends ViewQueryDefBuilder {
 
   /// Cursor for reverse pagination - end before this item key.
   final String endBefore;
-
-  /// Page identifier for tracking pagination state.
-  final String pageId;
 
   /// Maximum number of items to return.
   final int limit;
@@ -371,7 +360,6 @@ class ListQueryDefBuilder extends ViewQueryDefBuilder {
       subscribe: subscribe,
       startAfter: startAfter,
       endBefore: endBefore,
-      pageId: pageId,
       limit: limit,
     );
   }
@@ -407,7 +395,6 @@ extension QueryDefBuilderManual on QueryDefBuilder {
     String entityName,
     String name,
     List<String> attrs,
-    String pageId,
     void Function(ListQueryDefBuilder qb) fun, {
     String startAfter = '',
     String endBefore = '',
@@ -417,7 +404,6 @@ extension QueryDefBuilderManual on QueryDefBuilder {
       entityName,
       name,
       attrs,
-      pageId: pageId,
       startAfter: startAfter,
       endBefore: endBefore,
       limit: limit,

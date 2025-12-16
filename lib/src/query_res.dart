@@ -260,7 +260,13 @@ class ListItem {
 /// and attributes for complex list data structures.
 class ListQueryResult extends ViewQueryResult {
   /// Creates a list query result with items and attributes.
-  ListQueryResult(super.value, this.attrs, super.changeId, this.items);
+  ListQueryResult(
+    super.value,
+    this.attrs,
+    super.changeId,
+    this.items,
+    this.pageId,
+  );
 
   /// List of items with their keys and entity IDs in this view.
   @override
@@ -272,6 +278,9 @@ class ListQueryResult extends ViewQueryResult {
   /// Maps each item ID to its attributes (itemId -> {attrName: attrValue}).
   final Map<String, Map<String, dynamic>> attrs;
 
+  /// Page identifier indicating which page this result belongs to.
+  final String pageId;
+
   factory ListQueryResult.fromJson(Map<String, dynamic> json) {
     assert(json['type'] == 'list');
 
@@ -281,6 +290,7 @@ class ListQueryResult extends ViewQueryResult {
     Map<String, Map<String, dynamic>> attrs = Map.from(json['attrs'] ?? {});
     List<Map<String, dynamic>> itemsJson = List.from(json['items']);
     String ver = json['chid'];
+    String pageId = json['pageId'] ?? '';
 
     var value = <ListItem>[];
     var items = <QueryResult>[];
@@ -290,7 +300,7 @@ class ListQueryResult extends ViewQueryResult {
       items.add(QueryResult.fromJson(pair[1]));
     }
 
-    return ListQueryResult(value, attrs, ver, items);
+    return ListQueryResult(value, attrs, ver, items, pageId);
   }
 
   @override
@@ -301,6 +311,7 @@ class ListQueryResult extends ViewQueryResult {
       if (attrs.isNotEmpty) 'attrs': attrs,
       'chid': changeId,
       'items': items.map((i) => i.toJson()).toList(),
+      if (pageId.isNotEmpty) 'pageId': pageId,
     };
   }
 }
@@ -386,13 +397,22 @@ class RefQueryResultBuilder extends ViewQueryResultBuilder {
 /// Constructs list query results with per-item attributes and nested queries.
 class ListQueryResultBuilder extends ViewQueryResultBuilder {
   /// Creates a list query result builder.
-  ListQueryResultBuilder(super.name, this.attrs, super.snap, this.items);
+  ListQueryResultBuilder(
+    super.name,
+    this.attrs,
+    super.snap,
+    this.items,
+    this.pageId,
+  );
 
   /// Query result builders for each item in the list.
   final List<QueryResultBuilder> items;
 
   /// Attributes mapped by item ID and attribute name.
   final Map<String, Map<String, dynamic>> attrs;
+
+  /// Page identifier for this list result.
+  final String pageId;
 
   @override
   ViewQueryResult build() {
@@ -401,6 +421,7 @@ class ListQueryResultBuilder extends ViewQueryResultBuilder {
       attrs,
       snap.changeId,
       items.map((i) => i.build()),
+      pageId,
     );
   }
 }
@@ -435,6 +456,7 @@ extension QueryResultBuilderManual on QueryResultBuilder {
     String name,
     Map<RefIdNamePair, dynamic> attrs,
     String changeId,
+    String pageId,
     void Function(
       Map<String, ({EntityId value, QueryResultBuilder query})> items,
     )
@@ -464,6 +486,7 @@ extension QueryResultBuilderManual on QueryResultBuilder {
         attrsMap,
         ViewSnapshot(listItems, changeId),
         queryBuilders,
+        pageId,
       ),
     );
   }
