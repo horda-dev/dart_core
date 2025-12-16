@@ -11,7 +11,6 @@ ListPageItemAdded _$ListPageItemAddedFromJson(Map<String, dynamic> json) =>
       pageId: json['pageId'] as String,
       key: json['key'] as String,
       value: json['value'] as String,
-      toBeginning: json['toBeginning'] as bool? ?? false,
     );
 
 Map<String, dynamic> _$ListPageItemAddedToJson(ListPageItemAdded instance) =>
@@ -19,7 +18,6 @@ Map<String, dynamic> _$ListPageItemAddedToJson(ListPageItemAdded instance) =>
       'pageId': instance.pageId,
       'key': instance.key,
       'value': instance.value,
-      'toBeginning': instance.toBeginning,
     };
 
 ListPageItemRemoved _$ListPageItemRemovedFromJson(Map<String, dynamic> json) =>

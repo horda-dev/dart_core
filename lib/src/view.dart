@@ -520,7 +520,6 @@ class ListPageItemAdded extends ListPageChange {
     required super.pageId,
     required this.key,
     required this.value,
-    this.toBeginning = false,
   });
 
   /// The key of the added item.
@@ -528,12 +527,6 @@ class ListPageItemAdded extends ListPageChange {
 
   /// The value of the added item.
   final String value;
-
-  /// Whether the item should be added to the beginning of the list.
-  ///
-  /// If true, the item is added at the start of the list.
-  /// If false, the item is added at the end of the list.
-  final bool toBeginning;
 
   factory ListPageItemAdded.fromJson(Map<String, dynamic> json) =>
       _$ListPageItemAddedFromJson(json);
