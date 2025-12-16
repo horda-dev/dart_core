@@ -290,7 +290,7 @@ class ListQueryResult extends ViewQueryResult {
     Map<String, Map<String, dynamic>> attrs = Map.from(json['attrs'] ?? {});
     List<Map<String, dynamic>> itemsJson = List.from(json['items']);
     String ver = json['chid'];
-    String pageId = json['pageId'] ?? '';
+    String pageId = json['pageId'];
 
     var value = <ListItem>[];
     var items = <QueryResult>[];
