@@ -1,3 +1,9 @@
+## 0.20.0
+
+- **BREAKING CHANGE**: Renamed `length` parameter to `limit` in ListQueryDef
+- **BREAKING CHANGE**: Moved `pageId` from ListQueryDef to ListQueryResult (now returned by server instead of requested by client)
+- **FEAT**: Add `endBefore` parameter to ListQueryDef for reverse pagination support
+
 ## 0.19.0
 
 - **BREAKING CHANGE**: List view items now use key-value pairs (ListItem class) instead of plain entity IDs

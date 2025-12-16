@@ -266,6 +266,15 @@ class ActorViewSub {
   @JsonKey(name: 'pageId', includeIfNull: false)
   final String? pageId;
 
+  /// String representation of a view identifier.
+  String get viewKey {
+    if (entityName.isEmpty) {
+      return '$id/$name';
+    }
+
+    return '$entityName/$id/$name';
+  }
+
   /// String representation of a subscription identifier.
   String get subKey {
     if (entityName.isEmpty) {
