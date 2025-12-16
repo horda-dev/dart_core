@@ -187,9 +187,9 @@ class ListQueryDef extends ViewQueryDef {
 
     Map<String, dynamic> queryJson = json['query'];
     List<String> attrs = List.from(json['attrs'] ?? []);
-    String startAfter = json['startAfter'] ?? '';
-    String endBefore = json['endBefore'] ?? '';
-    int limit = json['limit'] ?? 0;
+    String startAfter = json['startAfter'];
+    String endBefore = json['endBefore'];
+    int limit = json['limit'];
 
     return ListQueryDef(
       query: QueryDef.fromJson(queryJson),
@@ -206,9 +206,9 @@ class ListQueryDef extends ViewQueryDef {
       'type': 'list',
       'query': query.toJson(),
       if (attrs.isNotEmpty) 'attrs': attrs,
-      if (startAfter.isNotEmpty) 'startAfter': startAfter,
-      if (endBefore.isNotEmpty) 'endBefore': endBefore,
-      if (limit != 0) 'limit': limit,
+      'startAfter': startAfter,
+      'endBefore': endBefore,
+      'limit': limit,
     };
   }
 }
