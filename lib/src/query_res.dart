@@ -311,7 +311,7 @@ class ListQueryResult extends ViewQueryResult {
       if (attrs.isNotEmpty) 'attrs': attrs,
       'chid': changeId,
       'items': items.map((i) => i.toJson()).toList(),
-      if (pageId.isNotEmpty) 'pageId': pageId,
+      'pageId': pageId,
     };
   }
 }
