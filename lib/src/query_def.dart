@@ -163,8 +163,9 @@ class ListQueryDef extends ViewQueryDef {
     required this.attrs,
     super.subscribe,
     this.startAfter = '',
+    this.endBefore = '',
     required this.pageId,
-    required this.length,
+    required this.limit,
   });
 
   /// Nested query to execute on each item in the list.
@@ -176,11 +177,14 @@ class ListQueryDef extends ViewQueryDef {
   /// Cursor for pagination - start after this item key.
   final String startAfter;
 
+  /// Cursor for reverse pagination - end before this item key.
+  final String endBefore;
+
   /// Page identifier for tracking pagination state.
   final String pageId;
 
-  /// Maximum number of items to return (0 for no limit).
-  final int length;
+  /// Maximum number of items to return (0 for default).
+  final int limit;
 
   factory ListQueryDef.fromJson(Map<String, dynamic> json) {
     assert(json['type'] == 'list');
@@ -188,15 +192,17 @@ class ListQueryDef extends ViewQueryDef {
     Map<String, dynamic> queryJson = json['query'];
     List<String> attrs = List.from(json['attrs'] ?? []);
     String startAfter = json['startAfter'] ?? '';
+    String endBefore = json['endBefore'] ?? '';
     String pageId = json['pageId'] ?? '';
-    int len = json['len'] ?? 0;
+    int limit = json['limit'] ?? 0;
 
     return ListQueryDef(
       query: QueryDef.fromJson(queryJson),
       attrs: attrs,
       startAfter: startAfter,
+      endBefore: endBefore,
       pageId: pageId,
-      length: len,
+      limit: limit,
     );
   }
 
@@ -207,8 +213,9 @@ class ListQueryDef extends ViewQueryDef {
       'query': query.toJson(),
       if (attrs.isNotEmpty) 'attrs': attrs,
       if (startAfter.isNotEmpty) 'startAfter': startAfter,
+      if (endBefore.isNotEmpty) 'endBefore': endBefore,
       'pageId': pageId,
-      if (length != 0) 'len': length,
+      if (limit != 0) 'limit': limit,
     };
   }
 }
@@ -324,8 +331,9 @@ class ListQueryDefBuilder extends ViewQueryDefBuilder {
     this.attrs, {
     super.subscribe = false,
     this.startAfter = '',
+    this.endBefore = '',
     required this.pageId,
-    this.length = 0,
+    this.limit = 0,
   });
 
   final String entityName;
@@ -336,11 +344,14 @@ class ListQueryDefBuilder extends ViewQueryDefBuilder {
   /// Cursor for pagination - start after this item key.
   final String startAfter;
 
+  /// Cursor for reverse pagination - end before this item key.
+  final String endBefore;
+
   /// Page identifier for tracking pagination state.
   final String pageId;
 
   /// Maximum number of items to return.
-  final int length;
+  final int limit;
 
   void add(ViewQueryDefBuilder qb) {
     _subqueryViewBuilders.add(qb);
@@ -359,8 +370,9 @@ class ListQueryDefBuilder extends ViewQueryDefBuilder {
       attrs: attrs,
       subscribe: subscribe,
       startAfter: startAfter,
+      endBefore: endBefore,
       pageId: pageId,
-      length: length,
+      limit: limit,
     );
   }
 
@@ -398,6 +410,8 @@ extension QueryDefBuilderManual on QueryDefBuilder {
     String pageId,
     void Function(ListQueryDefBuilder qb) fun, {
     String startAfter = '',
+    String endBefore = '',
+    int limit = 0,
   }) {
     final qb = ListQueryDefBuilder(
       entityName,
@@ -405,6 +419,8 @@ extension QueryDefBuilderManual on QueryDefBuilder {
       attrs,
       pageId: pageId,
       startAfter: startAfter,
+      endBefore: endBefore,
+      limit: limit,
     );
     fun(qb);
     add(qb);
