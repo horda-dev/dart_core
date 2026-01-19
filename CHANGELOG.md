@@ -1,3 +1,7 @@
+## 0.20.1
+
+- **FIX**: Add missing `ref()` and `list()` methods to RefQueryDefBuilder and ListQueryDefBuilder extensions
+
 ## 0.20.0
 
 - **BREAKING CHANGE**: Renamed `length` parameter to `limit` in ListQueryDef

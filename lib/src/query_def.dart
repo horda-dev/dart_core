@@ -421,6 +421,40 @@ extension RefQueryDefBuilderManual on RefQueryDefBuilder {
   void val(String name) {
     add(ValueQueryDefBuilder(name));
   }
+
+  /// Adds a reference view query with nested builder configuration.
+  void ref(
+    String entityName,
+    String name,
+    List<String> attrs,
+    void Function(RefQueryDefBuilder qb) fun,
+  ) {
+    final qb = RefQueryDefBuilder(entityName, name, attrs);
+    fun(qb);
+    add(qb);
+  }
+
+  /// Adds a list view query with nested builder configuration.
+  void list(
+    String entityName,
+    String name,
+    List<String> attrs,
+    void Function(ListQueryDefBuilder qb) fun, {
+    String startAfter = '',
+    String endBefore = '',
+    int limit = 0,
+  }) {
+    final qb = ListQueryDefBuilder(
+      entityName,
+      name,
+      attrs,
+      startAfter: startAfter,
+      endBefore: endBefore,
+      limit: limit,
+    );
+    fun(qb);
+    add(qb);
+  }
 }
 
 /// Extension providing convenient methods for list query builders.
@@ -430,5 +464,39 @@ extension ListQueryDefBuilderManual on ListQueryDefBuilder {
   /// Adds a value view query to the per-item query definition.
   void val(String name) {
     add(ValueQueryDefBuilder(name));
+  }
+
+  /// Adds a reference view query with nested builder configuration.
+  void ref(
+    String entityName,
+    String name,
+    List<String> attrs,
+    void Function(RefQueryDefBuilder qb) fun,
+  ) {
+    final qb = RefQueryDefBuilder(entityName, name, attrs);
+    fun(qb);
+    add(qb);
+  }
+
+  /// Adds a list view query with nested builder configuration.
+  void list(
+    String entityName,
+    String name,
+    List<String> attrs,
+    void Function(ListQueryDefBuilder qb) fun, {
+    String startAfter = '',
+    String endBefore = '',
+    int limit = 0,
+  }) {
+    final qb = ListQueryDefBuilder(
+      entityName,
+      name,
+      attrs,
+      startAfter: startAfter,
+      endBefore: endBefore,
+      limit: limit,
+    );
+    fun(qb);
+    add(qb);
   }
 }
