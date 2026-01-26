@@ -1,8 +1,11 @@
 import 'package:collection/collection.dart';
+import 'package:json_annotation/json_annotation.dart';
 
 import 'error.dart';
 import 'id.dart';
 import 'view.dart';
+
+part 'query_res.g.dart';
 
 /// Snapshot of a view's current value with version information.
 ///
@@ -225,14 +228,14 @@ class RefQueryResult extends ViewQueryResult {
 }
 
 /// A single item in a list view with its position and referenced entity ID.
+@JsonSerializable()
 class ListItem {
   /// Creates a list item with the specified key and value.
   ListItem(this.position, this.refId);
 
   /// Creates a list item from JSON.
-  factory ListItem.fromJson(Map<String, dynamic> json) {
-    return ListItem(json['position'] as double, json['refId'] as String);
-  }
+  factory ListItem.fromJson(Map<String, dynamic> json) =>
+      _$ListItemFromJson(json);
 
   /// Unique list position for this item.
   final double position;
@@ -241,9 +244,7 @@ class ListItem {
   final EntityId refId;
 
   /// Converts the list item to JSON.
-  Map<String, dynamic> toJson() {
-    return {'position': position, 'refId': refId};
-  }
+  Map<String, dynamic> toJson() => _$ListItemToJson(this);
 
   @override
   String toString() {

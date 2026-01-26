@@ -6,6 +6,28 @@ part of 'view.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
+QueryListViewItemAdded _$QueryListViewItemAddedFromJson(
+  Map<String, dynamic> json,
+) => QueryListViewItemAdded(
+  pos: (json['pos'] as num).toDouble(),
+  refId: json['refId'] as String,
+);
+
+Map<String, dynamic> _$QueryListViewItemAddedToJson(
+  QueryListViewItemAdded instance,
+) => <String, dynamic>{'pos': instance.pos, 'refId': instance.refId};
+
+QueryListViewItemRemoved _$QueryListViewItemRemovedFromJson(
+  Map<String, dynamic> json,
+) => QueryListViewItemRemoved(
+  pos: (json['pos'] as num).toDouble(),
+  refId: json['refId'] as String,
+);
+
+Map<String, dynamic> _$QueryListViewItemRemovedToJson(
+  QueryListViewItemRemoved instance,
+) => <String, dynamic>{'pos': instance.pos, 'refId': instance.refId};
+
 ListPageItemAdded _$ListPageItemAddedFromJson(Map<String, dynamic> json) =>
     ListPageItemAdded(
       pageId: json['pageId'] as String,

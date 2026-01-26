@@ -209,33 +209,6 @@ class ListViewItemAdded extends ListViewChange {
   String format() => item.toString();
 }
 
-/// Change representing an item being added to a list view only if not already present.
-///
-/// Adds the entity reference to the list only if it's not already contained,
-/// preventing duplicate entries.
-class ListViewItemAddedIfAbsent extends ListViewChange {
-  /// Creates a conditional list item addition change.
-  ListViewItemAddedIfAbsent(this.key, this.value);
-
-  /// Unique key for this list position.
-  final String key;
-
-  /// ID of the entity to add to the list if not already present.
-  final EntityId value;
-
-  factory ListViewItemAddedIfAbsent.fromJson(Map<String, dynamic> json) {
-    return ListViewItemAddedIfAbsent(json['key'], json['value']);
-  }
-
-  @override
-  Map<String, dynamic> toJson() {
-    return {'key': key, 'value': value};
-  }
-
-  @override
-  String format() => '$key: $value';
-}
-
 /// Change representing an item being removed from a list view.
 ///
 /// Removes the specified entity from the list.
@@ -337,6 +310,7 @@ abstract class QueryListViewChange extends Change {
 /// Change representing an item being added to a query list view with position.
 ///
 /// Includes the position and reference ID of the added item.
+@JsonSerializable()
 class QueryListViewItemAdded extends QueryListViewChange {
   /// Creates a query list view item addition change.
   QueryListViewItemAdded({required this.pos, required this.refId});
@@ -347,22 +321,17 @@ class QueryListViewItemAdded extends QueryListViewChange {
   /// The reference ID of the added item.
   final EntityId refId;
 
-  factory QueryListViewItemAdded.fromJson(Map<String, dynamic> json) {
-    return QueryListViewItemAdded(
-      pos: json['pos'],
-      refId: json['refId'],
-    );
-  }
+  factory QueryListViewItemAdded.fromJson(Map<String, dynamic> json) =>
+      _$QueryListViewItemAddedFromJson(json);
 
   @override
-  Map<String, dynamic> toJson() {
-    return {'pos': pos, 'refId': refId};
-  }
+  Map<String, dynamic> toJson() => _$QueryListViewItemAddedToJson(this);
 }
 
 /// Change representing an item being removed from a query list view with position.
 ///
 /// Includes the position and reference ID of the removed item.
+@JsonSerializable()
 class QueryListViewItemRemoved extends QueryListViewChange {
   /// Creates a query list view item removal change.
   QueryListViewItemRemoved({required this.pos, required this.refId});
@@ -373,17 +342,11 @@ class QueryListViewItemRemoved extends QueryListViewChange {
   /// The reference ID of the removed item.
   final EntityId refId;
 
-  factory QueryListViewItemRemoved.fromJson(Map<String, dynamic> json) {
-    return QueryListViewItemRemoved(
-      pos: json['pos'],
-      refId: json['refId'],
-    );
-  }
+  factory QueryListViewItemRemoved.fromJson(Map<String, dynamic> json) =>
+      _$QueryListViewItemRemovedFromJson(json);
 
   @override
-  Map<String, dynamic> toJson() {
-    return {'pos': pos, 'refId': refId};
-  }
+  Map<String, dynamic> toJson() => _$QueryListViewItemRemovedToJson(this);
 }
 
 /// Type alias for identifying attributes attached to referenced entities.
