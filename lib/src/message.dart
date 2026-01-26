@@ -761,9 +761,6 @@ void kRegisterFluirMessage() {
 
   kRegisterMessageFactory<ListViewCleared>(ListViewCleared.fromJson);
   kRegisterMessageFactory<ListViewItemAdded>(ListViewItemAdded.fromJson);
-  kRegisterMessageFactory<ListViewItemAddedIfAbsent>(
-    ListViewItemAddedIfAbsent.fromJson,
-  );
   kRegisterMessageFactory<ListViewItemRemoved>(ListViewItemRemoved.fromJson);
   kRegisterMessageFactory<ListViewItemChanged>(ListViewItemChanged.fromJson);
 
