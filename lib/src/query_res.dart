@@ -1,8 +1,11 @@
 import 'package:collection/collection.dart';
+import 'package:json_annotation/json_annotation.dart';
 
 import 'error.dart';
 import 'id.dart';
 import 'view.dart';
+
+part 'query_res.g.dart';
 
 /// Snapshot of a view's current value with version information.
 ///
@@ -224,33 +227,28 @@ class RefQueryResult extends ViewQueryResult {
   }
 }
 
-/// A single item in a list view with its key (XID) and value (referenced entity ID).
-///
-/// Represents the pairing of a unique key (XID) with an entity reference,
-/// allowing lists to maintain stable identifiers independent of the entity values.
+/// A single item in a list view with its position and referenced entity ID.
+@JsonSerializable()
 class ListItem {
   /// Creates a list item with the specified key and value.
-  ListItem(this.key, this.value);
+  ListItem(this.position, this.refId);
 
   /// Creates a list item from JSON.
-  factory ListItem.fromJson(Map<String, dynamic> json) {
-    return ListItem(json['key'] as String, json['value'] as String);
-  }
+  factory ListItem.fromJson(Map<String, dynamic> json) =>
+      _$ListItemFromJson(json);
 
-  /// Unique identifier for this list position (XID).
-  final String key;
+  /// Unique list position for this item.
+  final double position;
 
   /// The referenced entity ID.
-  final EntityId value;
+  final EntityId refId;
 
   /// Converts the list item to JSON.
-  Map<String, dynamic> toJson() {
-    return {'key': key, 'value': value};
-  }
+  Map<String, dynamic> toJson() => _$ListItemToJson(this);
 
   @override
   String toString() {
-    return 'ListItem(key:$key, value:$value)';
+    return 'ListItem(position:$position, refId:$refId)';
   }
 }
 
@@ -268,14 +266,14 @@ class ListQueryResult extends ViewQueryResult {
     this.pageId,
   );
 
-  /// List of items with their keys and entity IDs in this view.
+  /// List of items this view.
   @override
   Iterable<ListItem> get value => super.value;
 
   /// Query results for each item in the list.
   final Iterable<QueryResult> items;
 
-  /// Maps each item ID to its attributes (itemId -> {attrName: attrValue}).
+  /// Maps each referenced ID to its attributes (refId -> {attrName: attrValue}).
   final Map<String, Map<String, dynamic>> attrs;
 
   /// Page identifier indicating which page this result belongs to.
@@ -408,7 +406,7 @@ class ListQueryResultBuilder extends ViewQueryResultBuilder {
   /// Query result builders for each item in the list.
   final List<QueryResultBuilder> items;
 
-  /// Attributes mapped by item ID and attribute name.
+  /// Attributes mapped by ref ID and attribute name.
   final Map<String, Map<String, dynamic>> attrs;
 
   /// Page identifier for this list result.
@@ -458,7 +456,7 @@ extension QueryResultBuilderManual on QueryResultBuilder {
     String changeId,
     String pageId,
     void Function(
-      Map<String, ({EntityId value, QueryResultBuilder query})> items,
+      Map<double, ({EntityId refId, QueryResultBuilder query})> items,
     )
     fun,
   ) {
@@ -469,12 +467,12 @@ extension QueryResultBuilderManual on QueryResultBuilder {
       attr[kv.key.name] = kv.value;
     }
 
-    var items = <String, ({EntityId value, QueryResultBuilder query})>{};
+    var items = <double, ({EntityId refId, QueryResultBuilder query})>{};
     fun(items);
 
-    // Create ListItem objects from the XID keys and EntityId values
+    // Create ListItem objects from the positions and ref ids
     var listItems = items.entries
-        .map((e) => ListItem(e.key, e.value.value))
+        .map((e) => ListItem(e.key, e.value.refId))
         .toList();
 
     // Extract the query builders in the same order
@@ -493,14 +491,14 @@ extension QueryResultBuilderManual on QueryResultBuilder {
 }
 
 extension ListQueryResultBuilderManual
-    on Map<String, ({EntityId value, QueryResultBuilder query})> {
+    on Map<double, ({EntityId refId, QueryResultBuilder query})> {
   void item(
-    String key,
-    EntityId value,
+    double position,
+    EntityId refId,
     void Function(QueryResultBuilder rb) fun,
   ) {
     var qrb = QueryResultBuilder();
     fun(qrb);
-    this[key] = (value: value, query: qrb);
+    this[position] = (refId: refId, query: qrb);
   }
 }
