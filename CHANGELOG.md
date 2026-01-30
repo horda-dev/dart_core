@@ -1,3 +1,10 @@
+## 0.21.0
+
+- **BREAKING CHANGE**: Refactored `ListItem` to use `position` (double) and `refId` instead of `key` and `value`
+- **BREAKING CHANGE**: `ListViewItemAdded` now takes a single `item` parameter (EntityId) instead of `key` and `value`
+- **BREAKING CHANGE**: `ListViewItemRemoved` now takes a single `item` parameter (EntityId) instead of `key`
+- **BREAKING CHANGE**: Removed `ListViewItemAddedIfAbsent` class
+
 ## 0.20.1
 
 - **FIX**: Add missing `ref()` and `list()` methods to RefQueryDefBuilder and ListQueryDefBuilder extensions

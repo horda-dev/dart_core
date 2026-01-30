@@ -1,6 +1,6 @@
 name: horda_core
 description: Code shared by Horda's client and server packages.
-version: 0.20.1
+version: 0.21.0
 repository: https://github.com/horda-ai/dart_core
 
 environment:
