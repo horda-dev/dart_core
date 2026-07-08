@@ -1,3 +1,7 @@
+## 0.21.1
+
+- **FIX**: resolve Horda message type names from explicit constants instead of `Type.toString()`/`runtimeType.toString()`, keeping serialization stable under release web minification and throwing on unknown internal types
+
 ## 0.21.0
 
 - **BREAKING CHANGE**: Refactored `ListItem` to use `position` (double) and `refId` instead of `key` and `value`
