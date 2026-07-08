@@ -350,17 +350,7 @@ class ChangeEnvelop {
   Map<String, dynamic> toJson() {
     final changesJson = [];
     for (final change in changes) {
-      // eliminate generic value type string
-      String typeName;
-      final changeType = change.runtimeType.toString();
-
-      if (changeType.startsWith('ValueViewCreated')) {
-        typeName = 'ValueViewCreated';
-      } else if (changeType.startsWith('ValueViewChanged')) {
-        typeName = 'ValueViewChanged';
-      } else {
-        typeName = changeType;
-      }
+      final typeName = _hordaMessageTypeFromInstance(change);
 
       changesJson.add({'type': typeName, 'change': change.toJson()});
     }
@@ -764,6 +754,15 @@ void kRegisterFluirMessage() {
   kRegisterMessageFactory<ListViewItemRemoved>(ListViewItemRemoved.fromJson);
   kRegisterMessageFactory<ListViewItemChanged>(ListViewItemChanged.fromJson);
 
+  // query list view
+
+  kRegisterMessageFactory<QueryListViewItemAdded>(
+    QueryListViewItemAdded.fromJson,
+  );
+  kRegisterMessageFactory<QueryListViewItemRemoved>(
+    QueryListViewItemRemoved.fromJson,
+  );
+
   // list view page sync
 
   kRegisterMessageFactory<ListPageCleared>(ListPageCleared.fromJson);
@@ -789,10 +788,7 @@ void kRegisterFluirMessage() {
 
 void kRegisterMessageFactory<T extends Message>(FromJsonFun<T> fun) {
   // eliminate generic value type string
-  final typeName = switch (T) {
-    const (ValueViewChanged) => 'ValueViewChanged',
-    _ => T.toString(),
-  };
+  final typeName = _hordaMessageTypeFromType(T);
 
   if (kMsgFromJsonFac.containsKey(typeName)) {
     Logger('Fluir.Core').warning('factory fun for $T is already registered');
@@ -800,6 +796,47 @@ void kRegisterMessageFactory<T extends Message>(FromJsonFun<T> fun) {
   }
 
   kMsgFromJsonFac[typeName] = fun;
+}
+
+/// Maps a [Message] instance to its stable, constant type name.
+///
+/// Avoids `runtimeType.toString()`, which causes mismatches due to minification in release web builds.
+String _hordaMessageTypeFromInstance(Message message) {
+  // ValueViewChanged is generic, so its runtimeType is ValueViewChanged<T>;
+  // `is` matches regardless of the type argument.
+  if (message is ValueViewChanged) {
+    return 'ValueViewChanged';
+  }
+
+  return _hordaMessageTypeFromType(message.runtimeType);
+}
+
+/// Maps a Horda message [Type] to its stable, constant type name.
+///
+/// Avoids [Type.toString], which causes mismatches due to minification in release web builds.
+String _hordaMessageTypeFromType(Type type) {
+  return switch (type) {
+    const (FluirErrorEvent) => 'FluirErrorEvent',
+    const (ValueViewChanged) => 'ValueViewChanged',
+    const (CounterViewIncremented) => 'CounterViewIncremented',
+    const (CounterViewDecremented) => 'CounterViewDecremented',
+    const (CounterViewReset) => 'CounterViewReset',
+    const (RefViewChanged) => 'RefViewChanged',
+    const (ListViewCleared) => 'ListViewCleared',
+    const (ListViewItemAdded) => 'ListViewItemAdded',
+    const (ListViewItemRemoved) => 'ListViewItemRemoved',
+    const (ListViewItemChanged) => 'ListViewItemChanged',
+    const (QueryListViewItemAdded) => 'QueryListViewItemAdded',
+    const (QueryListViewItemRemoved) => 'QueryListViewItemRemoved',
+    const (ListPageCleared) => 'ListPageCleared',
+    const (ListPageItemAdded) => 'ListPageItemAdded',
+    const (ListPageItemRemoved) => 'ListPageItemRemoved',
+    const (RefValueAttributeChanged) => 'RefValueAttributeChanged',
+    const (CounterAttrIncremented) => 'CounterAttrIncremented',
+    const (CounterAttrDecremented) => 'CounterAttrDecremented',
+    const (CounterAttrReset) => 'CounterAttrReset',
+    _ => throw FluirError('unknown message type $type'),
+  };
 }
 
 dynamic kMessageFromJson(String type, Map<String, dynamic> json) {
